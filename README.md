@@ -1,10 +1,9 @@
-# Bonfire:Common
+# Bonfire:Mailer
 
 An library for [Bonfire](https://bonfire.cafe/) that contains:
 
-- Utils
-- Common Functions
-- Etc
+- Sending email (using [Bamboo](https://github.com/thoughtbot/bamboo))
+- Checking hypothetical email or domain validity
 
 ## Handy commands
 
