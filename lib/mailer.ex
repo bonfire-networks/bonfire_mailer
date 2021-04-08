@@ -25,6 +25,9 @@ defmodule Bonfire.Mailer do
         #   # give up
         #   _ -> raise error
         # end
+      error ->
+        Logger.error("Email delivery error: #{inspect(error)}")
+        {:error, error}
     end
   end
 
