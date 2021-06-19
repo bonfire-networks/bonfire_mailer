@@ -1,7 +1,7 @@
 import Config
 
 config :bonfire_mailer,
-  from_address: "noreply@bonfire.local",
+  reply_to: "noreply@bonfire.local",
   check_mx: true,
   check_format: true
 

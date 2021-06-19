@@ -6,28 +6,30 @@ defmodule Bonfire.Mailer do
   def send_now(email, to) do
     from =
       Bonfire.Common.Config.get(__MODULE__, [])
-      |> Keyword.get(:from_address, "noreply@bonfire.local")
+      |> Keyword.get(:reply_to, "noreply@bonfire.local")
     try do
       mail =
         email
         |> Email.from(from)
         |> Email.to(to)
+
       deliver_now(mail)
+
       {:ok, mail}
     rescue
-      error in Bamboo.SMTPAdapter.SMTPError ->
-        # le sigh, i give up
-        Logger.error("Email delivery error: #{inspect(error.raw)}")
-        {:error, error}
-        # case error.raw do
-        #   {:no_credentials, _} -> {:error, :config}
-        #   {:retries_exceeded, _} -> {:error, :rejected}
-        #   # give up
-        #   _ -> raise error
-        # end
       error ->
-        Logger.error("Email delivery error: #{inspect(error)}")
-        {:error, error}
+        handle_error(error)
+    end
+  end
+
+  def handle_error(error) do
+    e = Map.get(error, :raw, error)
+    Logger.error("Email delivery error: #{inspect(e)}")
+    case e do
+      {:no_credentials, _} -> {:error, :mailer_config}
+      {:retries_exceeded, _} -> {:error, :mailer_retries_exceeded}
+      %Bamboo.ApiError{message: msg} -> {:error, :mailer_api_error}
+      _ -> {:error, :mailer} # give up
     end
   end
 
