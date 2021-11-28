@@ -1,8 +1,8 @@
 gettext = "~> 0.11"
 jason = "~> 1.0"
 # email
-bamboo = "~> 1.5"
-bamboo_smtp = "~> 3.0.0"
+bamboo = "~> 2.2"
+bamboo_smtp = "~> 4.1"
 # fake data generation, mostly for tests
 faker = "~> 0.12"
 # checking email validity
