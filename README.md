@@ -1,4 +1,4 @@
-# Bonfire:Mailer
+# Bonfire.Mailer
 
 An library for [Bonfire](https://bonfire.cafe/) that contains:
 
