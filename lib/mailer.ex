@@ -1,7 +1,7 @@
 defmodule Bonfire.Mailer do
   use Bamboo.Mailer, otp_app: Bonfire.Common.Config.get!(:otp_app)
   alias Bamboo.Email
-  require Logger
+  import Where
 
   def send_now(email, to) do
     from =
@@ -24,7 +24,7 @@ defmodule Bonfire.Mailer do
 
   def handle_error(error) do
     e = Map.get(error, :raw, error)
-    Logger.error("Email delivery error: #{inspect(e)}")
+    error("Email delivery error: #{inspect(e)}")
     case e do
       {:no_credentials, _} -> {:error, :mailer_config}
       {:retries_exceeded, _} -> {:error, :mailer_retries_exceeded}
