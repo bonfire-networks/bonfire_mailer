@@ -18,13 +18,13 @@ defmodule Bonfire.Mailer do
       {:ok, mail}
     rescue
       error ->
-        handle_error(error)
+        handle_error(error, __STACKTRACE__)
     end
   end
 
-  def handle_error(error) do
+  def handle_error(error, stacktrace \\ nil) do
     e = Map.get(error, :raw, error)
-    error("Email delivery error: #{inspect(e)}")
+    error(stacktrace, "Email delivery error: #{inspect(e)}")
     case e do
       {:no_credentials, _} -> {:error, :mailer_config}
       {:retries_exceeded, _} -> {:error, :mailer_retries_exceeded}
