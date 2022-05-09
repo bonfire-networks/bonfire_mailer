@@ -8,7 +8,7 @@ defmodule Bonfire.Mailer.MixProject do
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:gettext] ++ Mix.compilers(),
       deps: Mess.deps [
         {:phoenix_live_reload, "~> 1.2", only: :dev},
         {:dbg, "~> 1.0", only: :dev}
