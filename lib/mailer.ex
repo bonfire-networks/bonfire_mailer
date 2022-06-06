@@ -1,12 +1,13 @@
 defmodule Bonfire.Mailer do
-  use Bamboo.Mailer, otp_app: Bonfire.Common.Config.get!(:otp_app)
+  alias Bonfire.Common.Config
+  use Bamboo.Mailer, otp_app: Config.get!(:otp_app)
   alias Bamboo.Email
   import Where
 
-  def send_now(email, to) do
-    from =
-      Bonfire.Common.Config.get(__MODULE__, [])
-      |> Keyword.get(:reply_to, "noreply@bonfire.local")
+  def send_now(email, to, opts \\ []) do
+    config = Config.get(__MODULE__, [])
+    from = opts[:from] || Keyword.get(config, :reply_to, "noreply@bonfire.local")
+
     try do
       mail =
         email
@@ -21,6 +22,22 @@ defmodule Bonfire.Mailer do
         handle_error(error, __STACKTRACE__)
     end
   end
+
+  def send_app_feedback(type \\ "feedback", subject, body) do
+
+    config = Config.get(__MODULE__, [])
+    from = Keyword.get(config, :reply_to, "noreply@bonfire.local") #Keyword.get(config, :feedback_from, "team@bonfire.cafe")
+    to = Keyword.get(config, :feedback_to, "bonfire@fire.fundersclub.com")
+
+    app_name = Config.get(:app_name, "Bonfire")
+
+    Email.new_email(
+      subject: "#{subject} - #{app_name} #{type}",
+      text_body: body
+    )
+    |> send_now(to, from: from)
+  end
+
 
   def handle_error(error, stacktrace \\ nil) do
     e = Map.get(error, :raw, error)
