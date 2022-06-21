@@ -29,7 +29,7 @@ defmodule Bonfire.Mailer do
     from = Keyword.get(config, :reply_to, "noreply@bonfire.local") #Keyword.get(config, :feedback_from, "team@bonfire.cafe")
     to = Keyword.get(config, :feedback_to, "bonfire@fire.fundersclub.com")
 
-    app_name = Config.get(:app_name, "Bonfire")
+    app_name = Bonfire.Application.name()
 
     Email.new_email(
       subject: "#{subject} - #{app_name} #{type}",
