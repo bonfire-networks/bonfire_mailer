@@ -1,4 +1,4 @@
-gettext = "~> 0.11"
+gettext = "~> 0.20"
 jason = "~> 1.0"
 # email
 bamboo = "~> 2.2"
