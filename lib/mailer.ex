@@ -2,7 +2,7 @@ defmodule Bonfire.Mailer do
   alias Bonfire.Common.Config
   use Bamboo.Mailer, otp_app: Config.get!(:otp_app)
   alias Bamboo.Email
-  import Where
+  import Untangle
 
   def send_now(email, to, opts \\ []) do
     config = Config.get(__MODULE__, [])
