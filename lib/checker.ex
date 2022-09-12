@@ -3,7 +3,8 @@ defmodule Bonfire.Mailer.Checker do
   @moduledoc """
   Functions for checking the validity of email addresses and domains
   """
-  alias EmailChecker.Check.{Format, MX}
+  alias EmailChecker.Check.Format
+  alias EmailChecker.Check.MX
 
   @type error_reason :: :format | :mx
 
@@ -32,5 +33,4 @@ defmodule Bonfire.Mailer.Checker do
       {:error, :format}
     end
   end
-
 end

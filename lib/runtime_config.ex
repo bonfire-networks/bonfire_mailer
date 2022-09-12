@@ -1,5 +1,4 @@
 defmodule Bonfire.Mailer.RuntimeConfig do
-
   def config_module, do: true
 
   def config do
@@ -7,7 +6,6 @@ defmodule Bonfire.Mailer.RuntimeConfig do
 
     # send emails in prod and dev only config
     if config_env() != :test do
-
       mail_blackhole = fn var ->
         IO.puts(
           "WARNING: The environment variable #{var} was not set or was set incorrectly, mail will NOT be sent."
@@ -101,8 +99,6 @@ defmodule Bonfire.Mailer.RuntimeConfig do
         "smtp" -> mail_smtp.()
         _ -> mail_blackhole.("MAIL_BACKEND")
       end
-
     end
-
   end
 end

@@ -6,6 +6,7 @@ defmodule Bonfire.Mailer do
 
   def send_now(email, to, opts \\ []) do
     config = Config.get(__MODULE__, [])
+
     from = opts[:from] || Keyword.get(config, :reply_to, "noreply@bonfire.local")
 
     try do
@@ -24,9 +25,9 @@ defmodule Bonfire.Mailer do
   end
 
   def send_app_feedback(type \\ "feedback", subject, body) do
-
     config = Config.get(__MODULE__, [])
-    from = Keyword.get(config, :reply_to, "noreply@bonfire.local") #Keyword.get(config, :feedback_from, "team@bonfire.cafe")
+    # Keyword.get(config, :feedback_from, "team@bonfire.cafe")
+    from = Keyword.get(config, :reply_to, "noreply@bonfire.local")
     to = Keyword.get(config, :feedback_to, "bonfire@fire.fundersclub.com")
 
     app_name = Bonfire.Application.name()
@@ -38,16 +39,16 @@ defmodule Bonfire.Mailer do
     |> send_now(to, from: from)
   end
 
-
   def handle_error(error, stacktrace \\ nil) do
     e = Map.get(error, :raw, error)
     error(stacktrace, "Email delivery error: #{inspect(e)}")
+
     case e do
       {:no_credentials, _} -> {:error, :mailer_config}
       {:retries_exceeded, _} -> {:error, :mailer_retries_exceeded}
       %Bamboo.ApiError{message: msg} -> {:error, :mailer_api_error}
-      _ -> {:error, :mailer} # give up
+      # give up
+      _ -> {:error, :mailer}
     end
   end
-
 end
