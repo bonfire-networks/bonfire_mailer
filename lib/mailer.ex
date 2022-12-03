@@ -25,7 +25,6 @@ defmodule Bonfire.Mailer do
         {:error, e} -> handle_error(e)
         other -> handle_error(other)
       end
-
     rescue
       error ->
         handle_error(error, __STACKTRACE__)
