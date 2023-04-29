@@ -84,7 +84,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                               password: password,
                               tls: :always,
                               allowed_tls_versions: [:"tlsv1.2"],
-                              ssl: false,
+                              ssl: System.get_env("MAIL_SSL", false),
                               retries: 1,
                               auth: :always,
                               reply_to: from
