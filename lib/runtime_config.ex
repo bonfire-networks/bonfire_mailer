@@ -82,18 +82,20 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                               port: String.to_integer(System.get_env("MAIL_PORT", "587")),
                               username: user,
                               password: password,
-                              tls: (case System.get_env("MAIL_TLS") do
-                                "1"-> :always
-                                "0" -> :never
-                                _ -> :if_available
-                                end), 
+                              tls:
+                                (case System.get_env("MAIL_TLS") do
+                                   "1" -> :always
+                                   "0" -> :never
+                                   _ -> :if_available
+                                 end),
                               allowed_tls_versions: [:"tlsv1.2"],
                               ssl: System.get_env("MAIL_SSL", "false") not in ["false", "0"],
                               retries: String.to_integer(System.get_env("MAIL_RETRIES", "1")),
-                              auth: (case System.get_env("MAIL_SMTP_AUTH") do
-                                "1"-> :always
-                                _ -> :if_available
-                                end),
+                              auth:
+                                (case System.get_env("MAIL_SMTP_AUTH") do
+                                   "1" -> :always
+                                   _ -> :if_available
+                                 end),
                               reply_to: from
                         end
                     end
