@@ -2,7 +2,15 @@ gettext = "~> 0.20"
 jason = "~> 1.0"
 # email
 bamboo = "~> 2.2"
+
 bamboo_smtp = "~> 4.1"
+bamboo_mailjet = "~> 0.1.0"
+bamboo_postmark = "~> 1.0.0"
+bamboo_campaign_monitor = "~> 0.1"
+bamboo_sendcloud = "~> 0.2.0"
+bamboo_sparkpost = "~> 2.0"
+bamboo_ses = "~> 0.3.2"
+
 gen_smtp = "~> 1.2"
 # fake data generation, mostly for tests
 faker = "~> 0.12"
