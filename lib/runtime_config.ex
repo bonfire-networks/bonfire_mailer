@@ -162,5 +162,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
           mail_blackhole("MAIL_BACKEND")
       end
     end
+
+    config :bonfire_mailer, Bonfire.Mailer, feedback_to: System.get_env("BONFIRE_APP_FEEDBACK_TO")
   end
 end

@@ -5,6 +5,6 @@ config :bonfire_mailer,
   check_mx: true,
   check_format: true
 
-config :bonfire, Bonfire.Mailer,
+config :bonfire_mailer, Bonfire.Mailer,
   # set what service you want to use to send emails, from these: https://github.com/thoughtbot/bamboo#available-adapters
   adapter: Bamboo.LocalAdapter

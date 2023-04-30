@@ -8,10 +8,10 @@ defmodule Bonfire.Mailer do
   @default_email "noreply@bonfire.local"
   @team_email "team@bonfire.cafe"
 
-  def send_now(email, to, opts \\ []) do
-    config = Config.get(__MODULE__, [])
+  def config, do: Config.get(__MODULE__) || []
 
-    from = opts[:from] || Keyword.get(config, :reply_to, @default_email)
+  def send_now(email, to, opts \\ []) do
+    from = opts[:from] || Bonfire.Common.Config.get([Bonfire.Mailer, :reply_to]) || @default_email
 
     try do
       mail =
@@ -32,9 +32,8 @@ defmodule Bonfire.Mailer do
   end
 
   def send_app_feedback(type \\ "feedback", subject, body) do
-    config = Config.get(__MODULE__, [])
-    from = Keyword.get(config, :reply_to, @default_email)
-    to = Keyword.get(config, :feedback_to, @team_email)
+    from = Bonfire.Common.Config.get([Bonfire.Mailer, :reply_to]) || @default_email
+    to = Bonfire.Common.Config.get([Bonfire.Mailer, :feedback_to]) || @team_email
 
     app_name = Bonfire.Application.name()
 
