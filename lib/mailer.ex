@@ -1,7 +1,7 @@
 defmodule Bonfire.Mailer do
   alias Bonfire.Common.Utils
   alias Bonfire.Common.Config
-  use Bamboo.Mailer, otp_app: Config.get!(:otp_app)
+  use Bamboo.Mailer, otp_app: :bonfire_mailer
   alias Bamboo.Email
   import Untangle
 
