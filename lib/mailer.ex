@@ -11,6 +11,13 @@ defmodule Bonfire.Mailer do
   def config, do: Config.get(__MODULE__) || []
 
   def send_now(email, to, opts \\ []) do
+    send(email, to, :now, opts)
+  end
+  def send_async(email, to, opts \\ []) do
+    send(email, to, :async, opts)
+  end
+
+  def send(email, to, mode, opts \\ []) do
     from = opts[:from] || Bonfire.Common.Config.get([Bonfire.Mailer, :reply_to]) || @default_email
 
     try do
@@ -19,7 +26,7 @@ defmodule Bonfire.Mailer do
         |> Email.from(from)
         |> Email.to(to)
 
-      with {:ok, _done} <- deliver_now(mail) do
+      with {:ok, _done} <- do_send(mode, mail) do
         {:ok, mail}
       else
         {:error, e} -> handle_error(e)
@@ -29,6 +36,13 @@ defmodule Bonfire.Mailer do
       error ->
         handle_error(error, __STACKTRACE__)
     end
+  end
+
+  def do_send(:async, mail) do
+    deliver_later(mail) 
+  end
+  def do_send(_, mail) do
+    deliver_now(mail) 
   end
 
   def send_app_feedback(type \\ "feedback", subject, body) do
