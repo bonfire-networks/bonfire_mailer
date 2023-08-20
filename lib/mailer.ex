@@ -13,6 +13,7 @@ defmodule Bonfire.Mailer do
   def send_now(email, to, opts \\ []) do
     send(email, to, :now, opts)
   end
+
   def send_async(email, to, opts \\ []) do
     send(email, to, :async, opts)
   end
@@ -39,10 +40,11 @@ defmodule Bonfire.Mailer do
   end
 
   def do_send(:async, mail) do
-    deliver_later(mail) 
+    deliver_later(mail)
   end
+
   def do_send(_, mail) do
-    deliver_now(mail) 
+    deliver_now(mail)
   end
 
   def send_app_feedback(type \\ "feedback", subject, body) do
