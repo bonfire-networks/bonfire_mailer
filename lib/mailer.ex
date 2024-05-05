@@ -1,4 +1,6 @@
 defmodule Bonfire.Mailer do
+  @moduledoc "./README.md" |> File.stream!() |> Enum.drop(1) |> Enum.join()
+
   alias Bonfire.Common.Utils
   alias Bonfire.Common.Config
   use Bamboo.Mailer, otp_app: :bonfire_mailer
