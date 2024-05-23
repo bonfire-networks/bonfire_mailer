@@ -1,11 +1,13 @@
 defmodule Bonfire.Mailer.RuntimeConfig do
   @behaviour Bonfire.Common.ConfigModule
   import Config
+  import Untangle
   def config_module, do: true
 
   def mail_blackhole(var) do
-    IO.puts(
-      "WARNING: The environment variable #{var} was not set or was set incorrectly, mail will NOT be sent."
+    warn(
+      var,
+      "An environment variable was not set or was set incorrectly, mail will NOT be sent"
     )
 
     config :bonfire_mailer, Bonfire.Mailer, adapter: Bamboo.LocalAdapter
