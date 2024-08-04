@@ -2,7 +2,7 @@
 
 An library for [Bonfire](https://bonfire.cafe/) that contains:
 
-- Sending email (using [Bamboo](https://github.com/thoughtbot/bamboo))
+- Sending email using [Bamboo](https://github.com/thoughtbot/bamboo), which supports SMTP and a multitude of [email delivery providers (some of which require an extra dependency)](https://hexdocs.pm/bamboo/readme.html#available-adapters)
 - Checking hypothetical email or domain validity
 
 ## Handy commands

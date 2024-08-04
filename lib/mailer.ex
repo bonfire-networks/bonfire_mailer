@@ -10,17 +10,68 @@ defmodule Bonfire.Mailer do
   @default_email "noreply@bonfire.local"
   @team_email "team@bonfire.cafe"
 
+  @doc """
+  Retrieves the configuration for the Bonfire.Mailer module.
+
+  ## Examples
+
+      iex> Bonfire.Mailer.config()
+      [key: "value"]
+  """
   def config, do: Config.get(__MODULE__) || []
 
+  @doc """
+  Sends an email immediately.
+
+  ## Parameters
+
+    - email: The email content to be sent.
+    - to: The recipient's email address.
+    - opts: Optional parameters for sending the email.
+
+  ## Examples
+
+      iex> Bonfire.Mailer.send_now("Hello", "recipient@example.com")
+      {:ok, %Bamboo.Email{}}
+  """
   def send_now(email, to, opts \\ []) do
     send(email, to, :now, opts)
   end
 
+  @doc """
+  Sends an email asynchronously.
+
+  ## Parameters
+
+    - email: The email content to be sent.
+    - to: The recipient's email address.
+    - opts: Optional parameters for sending the email.
+
+  ## Examples
+
+      iex> Bonfire.Mailer.send_async("Hello", "recipient@example.com")
+      {:ok, %Bamboo.Email{}}
+  """
   def send_async(email, to, opts \\ []) do
     send(email, to, :async, opts)
   end
 
-  def send(email, to, mode, opts \\ []) do
+  @doc """
+  Sends an email with specified mode (immediate or async).
+
+  ## Parameters
+
+    - email: The email content to be sent.
+    - to: The recipient's email address.
+    - mode: The sending mode (:now or :async).
+    - opts: Optional parameters for sending the email.
+
+  ## Examples
+
+      iex> Bonfire.Mailer.send("Hello", "recipient@example.com", :now)
+      {:ok, %Bamboo.Email{}}
+  """
+  def send(email, to, mode \\ :async, opts \\ []) do
     from = opts[:from] || Bonfire.Common.Config.get([Bonfire.Mailer, :reply_to]) || @default_email
 
     try do
@@ -49,6 +100,20 @@ defmodule Bonfire.Mailer do
     deliver_now(mail)
   end
 
+  @doc """
+  Sends a feedback email to the application maintainers (to the email address configured at `:bonfire_mailer, Bonfire.Mailer, :feedback_to`)
+
+  ## Parameters
+
+    - type: The type of feedback (default: "feedback").
+    - subject: The subject of the feedback email.
+    - body: The body content of the feedback email.
+
+  ## Examples
+
+      iex> Bonfire.Mailer.send_app_feedback("bug", "Error report", "Found a bug in the system")
+      {:ok, %Bamboo.Email{}}
+  """
   def send_app_feedback(type \\ "feedback", subject, body) do
     from = Bonfire.Common.Config.get([Bonfire.Mailer, :reply_to]) || @default_email
     to = Bonfire.Common.Config.get([Bonfire.Mailer, :feedback_to]) || @team_email
@@ -62,6 +127,19 @@ defmodule Bonfire.Mailer do
     |> send_now(to, from: from)
   end
 
+  @doc """
+  Return a standard error tuple for errors that occur during email sending.
+
+  ## Parameters
+
+    - error: The error that occurred.
+    - stacktrace: The stacktrace of the error (optional).
+
+  ## Examples
+
+      iex> Bonfire.Mailer.handle_error(%Bamboo.ApiError{message: "Some API Error"})
+      {:error, :mailer_api_error}
+  """
   def handle_error(error, stacktrace \\ nil) do
     e = Utils.e(error, :raw, nil) || error
     error(stacktrace, "Email delivery error: #{inspect(e)}")
