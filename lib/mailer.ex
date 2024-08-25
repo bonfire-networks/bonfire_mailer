@@ -1,11 +1,12 @@
 defmodule Bonfire.Mailer do
   @moduledoc "./README.md" |> File.stream!() |> Enum.drop(1) |> Enum.join()
 
+  use Bamboo.Mailer, otp_app: :bonfire_mailer
+  use Bonfire.Common.E
+  import Untangle
   alias Bonfire.Common.Utils
   alias Bonfire.Common.Config
-  use Bamboo.Mailer, otp_app: :bonfire_mailer
   alias Bamboo.Email
-  import Untangle
 
   @default_email "noreply@bonfire.local"
   @team_email "team@bonfire.cafe"
@@ -141,7 +142,7 @@ defmodule Bonfire.Mailer do
       {:error, :mailer_api_error}
   """
   def handle_error(error, stacktrace \\ nil) do
-    e = Utils.e(error, :raw, nil) || error
+    e = e(error, :raw, nil) || error
     error(stacktrace, "Email delivery error: #{inspect(e)}")
 
     case e do
