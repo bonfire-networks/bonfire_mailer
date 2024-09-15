@@ -1,7 +1,9 @@
 gettext = "~> 0.20"
 jason = "~> 1.0"
-# email
+
+# email - todo make optional
 bamboo = "~> 2.2"
+swoosh = "~> 1.17"
 
 bamboo_smtp = "~> 4.1"
 bamboo_mailjet = "~> 0.1.0"
@@ -15,4 +17,4 @@ gen_smtp = "~> 1.2"
 # fake data generation, mostly for tests
 faker = "~> 0.12"
 # checking email validity
-email_checker = "~> 0.1"
+email_checker = "~> 0.2"

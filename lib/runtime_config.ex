@@ -10,7 +10,11 @@ defmodule Bonfire.Mailer.RuntimeConfig do
       "An environment variable was not set or was set incorrectly, mail will NOT be sent"
     )
 
-    config :bonfire_mailer, Bonfire.Mailer, adapter: Bamboo.LocalAdapter
+    config :bonfire_mailer, Bonfire.Mailer.Bamboo, adapter: Bamboo.LocalAdapter
+  end
+
+  def mailer do
+    Bonfire.Common.Config.get([Bonfire.Mailer, :mailer_backend]) || Bonfire.Mailer.Bamboo
   end
 
   def mail_service(adapter, extra \\ []) do
@@ -31,7 +35,9 @@ defmodule Bonfire.Mailer.RuntimeConfig do
               from ->
                 IO.puts("Note: Transactional emails will be sent through #{adapter}.")
 
-                config :bonfire_mailer, Bonfire.Mailer,
+                config :bonfire_mailer, Bonfire.Mailer, mail_backend: Bonfire.Mailer.Bamboo
+
+                config :bonfire_mailer, Bonfire.Mailer.Bamboo,
                   adapter: adapter,
                   domain: domain,
                   reply_to: from,
@@ -113,6 +119,9 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                               IO.puts("Note: Transactional emails will be sent through SMTP.")
 
                               config :bonfire_mailer, Bonfire.Mailer,
+                                mail_backend: Bonfire.Mailer.Bamboo
+
+                              config :bonfire_mailer, Bonfire.Mailer.Bamboo,
                                 adapter: Bamboo.SMTPAdapter,
                                 server: server,
                                 hostname: domain,
@@ -143,7 +152,9 @@ defmodule Bonfire.Mailer.RuntimeConfig do
         "aws" ->
           IO.puts("Note: Transactional emails will be sent through AWS SES.")
 
-          config :bonfire_mailer, Bonfire.Mailer,
+          config :bonfire_mailer, Bonfire.Mailer, mail_backend: Bonfire.Mailer.Bamboo
+
+          config :bonfire_mailer, Bonfire.Mailer.Bamboo,
             adapter: Bamboo.SesAdapter,
             ex_aws: [
               json_codec: Jason,
