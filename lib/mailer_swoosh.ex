@@ -3,7 +3,7 @@ defmodule Bonfire.Mailer.Swoosh do
 
   use Swoosh.Mailer, otp_app: :bonfire_mailer
 
-  defdelegate new(), to: Swoosh.Email
+  defdelegate new(data \\ []), to: Swoosh.Email
   defdelegate to(email, address), to: Swoosh.Email
   defdelegate from(email, address), to: Swoosh.Email
   defdelegate subject(email, subject), to: Swoosh.Email

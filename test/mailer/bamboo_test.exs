@@ -6,15 +6,15 @@ defmodule Bonfire.Mailer.BambooTest do
   use Bamboo.Test
 
   setup do
-    Process.put([:bonfire_mailer, Bonfire.Mailer, :mailer_backend], Bonfire.Mailer.Bamboo)
-    on_exit(fn -> Process.delete([:bonfire_mailer, Bonfire.Mailer, :mailer_backend]) end)
+    Process.put([:bonfire_mailer, Bonfire.Mailer, :mailer_behaviour], Bonfire.Mailer.Bamboo)
+    on_exit(fn -> Process.delete([:bonfire_mailer, Bonfire.Mailer, :mailer_behaviour]) end)
   end
 
   test "standard integration works" do
     debug(Bonfire.Mailer.RuntimeConfig.mailer())
 
     debug(
-      Bonfire.Common.Config.get_for_process([:bonfire_mailer, Bonfire.Mailer, :mailer_backend])
+      Bonfire.Common.Config.get_for_process([:bonfire_mailer, Bonfire.Mailer, :mailer_behaviour])
     )
 
     {:ok, email} = Bonfire.Mailer.send_app_feedback("Hello, Avengers!", "test", mode: :now)
@@ -27,7 +27,7 @@ defmodule Bonfire.Mailer.BambooTest do
     debug(Bonfire.Mailer.RuntimeConfig.mailer())
 
     debug(
-      Bonfire.Common.Config.get_for_process([:bonfire_mailer, Bonfire.Mailer, :mailer_backend])
+      Bonfire.Common.Config.get_for_process([:bonfire_mailer, Bonfire.Mailer, :mailer_behaviour])
     )
 
     {:ok, email} = Bonfire.Mailer.send_app_feedback("Hello, Avengers!", "test", mode: :async)

@@ -4,7 +4,7 @@ defmodule Bonfire.Mailer.Bamboo do
   use Bamboo.Mailer, otp_app: :bonfire_mailer
   import Untangle
 
-  defdelegate new(), to: Bamboo.Email, as: :new_email
+  defdelegate new(data \\ []), to: Bamboo.Email, as: :new_email
   defdelegate to(email, address), to: Bamboo.Email
   defdelegate from(email, address), to: Bamboo.Email
   defdelegate subject(email, subject), to: Bamboo.Email

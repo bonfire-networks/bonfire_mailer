@@ -10,7 +10,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
       "An environment variable was not set or was set incorrectly, mail will attempt being sent directly to the recipient's SMTP server (make sure your instance domain has SPF, DKIM, etc configured correctly)"
     )
 
-    config :bonfire_mailer, Bonfire.Mailer, mailer_backend: Bonfire.Mailer.Swoosh
+    config :bonfire_mailer, Bonfire.Mailer, mailer_behaviour: Bonfire.Mailer.Swoosh
     # see https://hexdocs.pm/swoosh/Swoosh.Adapters.Mua.html
     config :bonfire_mailer, Bonfire.Mailer.Swoosh, adapter: Swoosh.Adapters.Mua
     # just in case
@@ -18,92 +18,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
   end
 
   def mailer do
-    Bonfire.Common.Config.get([Bonfire.Mailer, :mailer_backend]) || Bonfire.Mailer.Bamboo
-  end
-
-  def bamboo_service(adapter, extra \\ []) do
-    case System.get_env("MAIL_KEY") do
-      nil ->
-        mail_blackhole("MAIL_KEY")
-
-      key ->
-        case System.get_env("MAIL_DOMAIN") || System.get_env("HOSTNAME") do
-          nil ->
-            mail_blackhole("MAIL_DOMAIN or HOSTNAME")
-
-          domain ->
-            case System.get_env("MAIL_FROM") do
-              nil ->
-                mail_blackhole("MAIL_FROM")
-
-              from ->
-                IO.puts("Note: Transactional emails will be sent through #{adapter}.")
-
-                config :bonfire_mailer, Bonfire.Mailer, mailer_backend: Bonfire.Mailer.Bamboo
-
-                config :bonfire_mailer, Bonfire.Mailer.Bamboo,
-                  adapter: adapter,
-                  domain: domain,
-                  reply_to: from,
-                  api_key: key,
-                  api_user: extra[:api_user],
-                  api_private_key: extra[:api_private_key],
-                  base_uri: extra[:base_uri],
-                  hackney_opts: [
-                    recv_timeout: :timer.minutes(1)
-                  ]
-            end
-        end
-    end
-  end
-
-  def swoosh_service(adapter, extra \\ []) do
-    case System.get_env("MAIL_KEY") do
-      nil ->
-        mail_blackhole("MAIL_KEY")
-
-      key ->
-        case System.get_env("MAIL_DOMAIN") || System.get_env("HOSTNAME") do
-          nil ->
-            mail_blackhole("MAIL_DOMAIN or HOSTNAME")
-
-          domain ->
-            case System.get_env("MAIL_FROM") do
-              nil ->
-                mail_blackhole("MAIL_FROM")
-
-              from ->
-                IO.puts("Note: Transactional emails will be sent through #{adapter}.")
-
-                config :bonfire_mailer, Bonfire.Mailer, mailer_backend: Bonfire.Mailer.Swoosh
-
-                config :bonfire_mailer, Bonfire.Mailer.Swoosh,
-                  adapter: adapter,
-                  domain: domain,
-                  reply_to: from,
-                  api_key: key,
-                  access_token: key,
-                  api_user: extra[:api_user],
-                  project_id: extra[:project_id],
-                  server_id: extra[:server_id],
-                  endpoint: extra[:endpoint],
-                  auth: extra[:auth],
-                  secret: extra[:secret],
-                  secret_key: extra[:secret_key],
-                  api_private_key: extra[:api_private_key],
-                  base_uri: extra[:base_uri]
-            end
-        end
-    end
-  end
-
-  defp any_service(swoosh, bamboo, extra \\ []) do
-    if System.get_env("MAIL_LIB") == "bamboo" do
-      bamboo_service(bamboo, extra)
-    else
-      #  default
-      swoosh_service(swoosh, extra)
-    end
+    Bonfire.Common.Config.get([Bonfire.Mailer, :mailer_behaviour]) || Bonfire.Mailer.Bamboo
   end
 
   def config do
@@ -207,7 +122,8 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                   if System.get_env("UPLOADS_S3_ACCESS_KEY_ID") &&
                        System.get_env("UPLOADS_S3_SECRET_ACCESS_KEY") &&
                        (!System.get_env("MAIL_KEY") || !System.get_env("MAIL_PRIVATE_KEY")) do
-                    config :bonfire_mailer, Bonfire.Mailer, mailer_backend: Bonfire.Mailer.Swoosh
+                    config :bonfire_mailer, Bonfire.Mailer,
+                      mailer_behaviour: Bonfire.Mailer.Swoosh
 
                     config :bonfire_mailer, Bonfire.Swoosh,
                       # send using same credentials as ex_aws (eg. configure for file uploads)
@@ -219,7 +135,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
 
                     if System.get_env("MAIL_LIB") != "bamboo" do
                       config :bonfire_mailer, Bonfire.Mailer,
-                        mailer_backend: Bonfire.Mailer.Swoosh
+                        mailer_behaviour: Bonfire.Mailer.Swoosh
 
                       config :bonfire_mailer, Bonfire.Swoosh,
                         adapter: Swoosh.Adapters.AmazonSES,
@@ -228,7 +144,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                         secret: private_key
                     else
                       config :bonfire_mailer, Bonfire.Mailer,
-                        mailer_backend: Bonfire.Mailer.Bamboo
+                        mailer_behaviour: Bonfire.Mailer.Bamboo
 
                       config :bonfire_mailer, Bonfire.Mailer.Bamboo,
                         adapter: Bamboo.SesAdapter,
@@ -247,7 +163,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
           end
 
         "sendmail" ->
-          case System.get_env("MAIL_SERVER") do
+          case System.get_env("MAIL_SERVER", "/usr/bin/sendmail") do
             nil ->
               mail_blackhole("MAIL_SERVER")
 
@@ -297,7 +213,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                                   auth: [username: user, password: password]
                               else
                                 config :bonfire_mailer, Bonfire.Mailer,
-                                  mailer_backend: Bonfire.Mailer.Bamboo
+                                  mailer_behaviour: Bonfire.Mailer.Bamboo
 
                                 config :bonfire_mailer, Bonfire.Mailer.Bamboo,
                                   adapter: Bamboo.SMTPAdapter,
@@ -329,12 +245,98 @@ defmodule Bonfire.Mailer.RuntimeConfig do
           end
 
         _ ->
-          mail_blackhole("mailer_backend")
+          mail_blackhole("MAIL_BACKEND")
       end
     end
 
     config :bonfire_mailer, Bonfire.Mailer, feedback_to: System.get_env("BONFIRE_APP_FEEDBACK_TO")
 
     config :swoosh, :api_client, Swoosh.ApiClient.Req
+  end
+
+  def bamboo_service(adapter, extra \\ []) do
+    case System.get_env("MAIL_KEY") do
+      nil ->
+        mail_blackhole("MAIL_KEY")
+
+      key ->
+        case System.get_env("MAIL_DOMAIN") || System.get_env("HOSTNAME") do
+          nil ->
+            mail_blackhole("MAIL_DOMAIN or HOSTNAME")
+
+          domain ->
+            case System.get_env("MAIL_FROM") do
+              nil ->
+                mail_blackhole("MAIL_FROM")
+
+              from ->
+                IO.puts("Note: Transactional emails will be sent through #{adapter}.")
+
+                config :bonfire_mailer, Bonfire.Mailer, mailer_behaviour: Bonfire.Mailer.Bamboo
+
+                config :bonfire_mailer, Bonfire.Mailer.Bamboo,
+                  adapter: adapter,
+                  domain: domain,
+                  reply_to: from,
+                  api_key: key,
+                  api_user: extra[:api_user],
+                  api_private_key: extra[:api_private_key],
+                  base_uri: extra[:base_uri],
+                  hackney_opts: [
+                    recv_timeout: :timer.minutes(1)
+                  ]
+            end
+        end
+    end
+  end
+
+  def swoosh_service(adapter, extra \\ []) do
+    case System.get_env("MAIL_KEY") do
+      nil ->
+        mail_blackhole("MAIL_KEY")
+
+      key ->
+        case System.get_env("MAIL_DOMAIN") || System.get_env("HOSTNAME") do
+          nil ->
+            mail_blackhole("MAIL_DOMAIN or HOSTNAME")
+
+          domain ->
+            case System.get_env("MAIL_FROM") do
+              nil ->
+                mail_blackhole("MAIL_FROM")
+
+              from ->
+                IO.puts("Note: Transactional emails will be sent through #{adapter}.")
+
+                config :bonfire_mailer, Bonfire.Mailer, mailer_behaviour: Bonfire.Mailer.Swoosh
+
+                config :bonfire_mailer, Bonfire.Mailer.Swoosh,
+                  adapter: adapter,
+                  domain: domain,
+                  reply_to: from,
+                  api_key: key,
+                  access_token: key,
+                  api_user: extra[:api_user],
+                  project_id: extra[:project_id],
+                  server_id: extra[:server_id],
+                  endpoint: extra[:endpoint],
+                  auth: extra[:auth],
+                  secret: extra[:secret],
+                  secret_key: extra[:secret_key],
+                  api_private_key: extra[:api_private_key],
+                  base_uri: extra[:base_uri],
+                  base_url: extra[:base_uri]
+            end
+        end
+    end
+  end
+
+  defp any_service(swoosh, bamboo, extra \\ []) do
+    if System.get_env("MAIL_LIB") == "bamboo" do
+      bamboo_service(bamboo, extra)
+    else
+      #  default
+      swoosh_service(swoosh, extra)
+    end
   end
 end

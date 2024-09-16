@@ -6,15 +6,15 @@ defmodule Bonfire.Mailer.SwooshTest do
   import Swoosh.TestAssertions
 
   setup do
-    Process.put([:bonfire_mailer, Bonfire.Mailer, :mailer_backend], Bonfire.Mailer.Swoosh)
-    on_exit(fn -> Process.delete([:bonfire_mailer, Bonfire.Mailer, :mailer_backend]) end)
+    Process.put([:bonfire_mailer, Bonfire.Mailer, :mailer_behaviour], Bonfire.Mailer.Swoosh)
+    on_exit(fn -> Process.delete([:bonfire_mailer, Bonfire.Mailer, :mailer_behaviour]) end)
   end
 
   test "standard integration works" do
     debug(Bonfire.Mailer.RuntimeConfig.mailer())
 
     debug(
-      Bonfire.Common.Config.get_for_process([:bonfire_mailer, Bonfire.Mailer, :mailer_backend])
+      Bonfire.Common.Config.get_for_process([:bonfire_mailer, Bonfire.Mailer, :mailer_behaviour])
     )
 
     {:ok, email} = Bonfire.Mailer.send_app_feedback("Hello, Avengers!", "test", mode: :now)
@@ -37,7 +37,7 @@ defmodule Bonfire.Mailer.SwooshTest do
     debug(Bonfire.Mailer.RuntimeConfig.mailer())
 
     debug(
-      Bonfire.Common.Config.get_for_process([:bonfire_mailer, Bonfire.Mailer, :mailer_backend])
+      Bonfire.Common.Config.get_for_process([:bonfire_mailer, Bonfire.Mailer, :mailer_behaviour])
     )
 
     {:ok, email} = Bonfire.Mailer.send_app_feedback("Hello, Avengers!", "test", mode: :async)

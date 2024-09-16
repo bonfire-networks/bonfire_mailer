@@ -20,7 +20,7 @@ defmodule Bonfire.Mailer do
     Supervisor.start_link(children, strategy: :one_for_one)
   end
 
-  def new, do: mailer().new()
+  def new(data \\ []), do: mailer().new(data)
   def to(email, address), do: mailer().to(email, address)
   def from(email, address), do: mailer().from(email, address)
   def subject(email, subject), do: mailer().subject(email, subject)
@@ -38,13 +38,13 @@ defmodule Bonfire.Mailer do
   def send(email, to, mode \\ :async, opts \\ []),
     do: send_impl(email, to, mode, opts)
 
-  def send_app_feedback(type \\ "feedback", subject, body, opts \\ []) do
+  def send_app_feedback(subject, body, opts \\ []) do
     from = Config.get([Bonfire.Mailer, :reply_to]) || @default_email
     to = Config.get([Bonfire.Mailer, :feedback_to]) || @team_email
     app_name = Bonfire.Application.name()
 
     send_impl(body, to, opts[:mode] || :async,
-      subject: "#{subject} - #{app_name} #{type}",
+      subject: "#{subject} - #{app_name} #{opts[:type] || "feedback"}",
       from: from
     )
   end
