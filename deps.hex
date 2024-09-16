@@ -2,9 +2,11 @@ gettext = "~> 0.20"
 jason = "~> 1.0"
 
 # email - todo make optional
-bamboo = "~> 2.2"
 swoosh = "~> 1.17"
+mua = "~> 0.2.0"
+mail = "~> 0.3.0"
 
+bamboo = "~> 2.2"
 bamboo_smtp = "~> 4.1"
 bamboo_mailjet = "~> 0.1.0"
 bamboo_postmark = "~> 1.0.0"
