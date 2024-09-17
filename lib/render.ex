@@ -1,5 +1,6 @@
 defmodule Bonfire.Mailer.Render do
   alias Bonfire.Common.Utils
+  alias Bonfire.Common.Types
   use Arrows
   import Untangle
 
@@ -16,7 +17,7 @@ defmodule Bonfire.Mailer.Render do
     |> text_body("text", template, mod, assigns, opts)
   end
 
-  defp html_body(email, "mjml" = format, template, mod, assigns, opts) do
+  def html_body(email, "mjml" = format, template, mod, assigns, opts) do
     render_to_string(mod, template, format, assigns)
     |> maybe_with_layout(format, email, ..., assigns, opts[:layout])
     |> to_binary()
@@ -24,7 +25,7 @@ defmodule Bonfire.Mailer.Render do
     |> Bonfire.Mailer.html_body(email, ...)
   end
 
-  defp text_body(email, format, template, mod, assigns, opts) do
+  def text_body(email, format, template, mod, assigns, opts) do
     render_to_string(mod, template, format, assigns)
     |> maybe_with_layout(format, email, ..., assigns, opts[:layout])
     |> to_binary()
@@ -51,7 +52,7 @@ defmodule Bonfire.Mailer.Render do
   #     Phoenix.Template.render_to_string(mod, "#{template}_#{format}", format, assigns)
   #   end
   def render_to_string(mod, template, format, assigns) do
-    case String.to_existing_atom("#{template}_#{format}") do
+    case Types.maybe_to_atom!("#{template}_#{format}") do
       nil ->
         nil
 
@@ -60,7 +61,7 @@ defmodule Bonfire.Mailer.Render do
     end
   end
 
-  defp to_binary(%Phoenix.LiveView.Rendered{} = rendered),
+  defp to_binary(%struct{} = rendered) when struct == Phoenix.LiveView.Rendered,
     do:
       rendered
       |> Phoenix.HTML.html_escape()
