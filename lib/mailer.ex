@@ -7,6 +7,7 @@ defmodule Bonfire.Mailer do
   use Bonfire.Common.E
   import Bonfire.Mailer.RuntimeConfig, only: [mailer: 0]
   alias Bonfire.Common.Config
+  alias Bonfire.Common.Utils
 
   @default_email "noreply@bonfire.local"
   @team_email "team@bonfire.cafe"
@@ -41,13 +42,14 @@ defmodule Bonfire.Mailer do
   def send_app_feedback(subject, body, opts \\ []) do
     from = Config.get([Bonfire.Mailer, :reply_to]) || @default_email
     to = Config.get([Bonfire.Mailer, :feedback_to]) || @team_email
-    app_name = Bonfire.Application.name()
 
     send_impl(body, to, opts[:mode] || :async,
-      subject: "#{subject} - #{app_name} #{opts[:type] || "feedback"}",
+      subject: "#{subject} - #{app_name()} #{opts[:type] || "feedback"}",
       from: from
     )
   end
+
+  def app_name, do: Utils.maybe_apply(Bonfire.Application, :name, [], fallback_return: "Bonfire")
 
   defp send_impl(email_content, to, mode, opts) when is_binary(email_content) do
     new()

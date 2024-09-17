@@ -15,6 +15,7 @@ bamboo_sendcloud = "~> 0.2.0"
 bamboo_sparkpost = "~> 2.0"
 bamboo_ses = "~> 0.4.0"
 
+mjml = "~> 4.0"
 gen_smtp = "~> 1.2"
 # fake data generation, mostly for tests
 faker = "~> 0.12"
