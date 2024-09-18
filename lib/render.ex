@@ -1,8 +1,11 @@
 defmodule Bonfire.Mailer.Render do
   alias Bonfire.Common.Utils
   alias Bonfire.Common.Types
+  alias Bonfire.Common.Config
   use Arrows
   import Untangle
+
+  def default_layout, do: Config.get([__MODULE__, :default_layout], Bonfire.UI.Common.Email.Basic)
 
   def new_templated(mod, assigns, opts \\ []) do
     Bonfire.Mailer.new()
@@ -11,34 +14,46 @@ defmodule Bonfire.Mailer.Render do
 
   def templated(%{} = email, mod, assigns, opts \\ []) do
     template = opts[:template] || filename_for_module_template(mod)
+    layout = opts[:layout] || default_layout()
 
     email
-    |> html_body("mjml", template, mod, assigns, opts)
-    |> text_body("text", template, mod, assigns, opts)
+    |> Bonfire.Mailer.html_body(render_templated("mjml", mod, assigns, template, layout, opts))
+    |> Bonfire.Mailer.text_body(render_templated("text", template, mod, assigns, opts))
   end
 
-  def html_body(email, "mjml" = format, template, mod, assigns, opts) do
-    render_to_string(mod, template, format, assigns)
-    |> maybe_with_layout(format, email, ..., assigns, opts[:layout])
-    |> to_binary()
-    |> mjml_to_html()
-    |> Bonfire.Mailer.html_body(email, ...)
+  # TODO: put the following functions somewhere else?
+
+  def render_templated(format, mod, assigns, template \\ nil, layout \\ nil, opts \\ [])
+
+  def render_templated("mjml" = format, mod, assigns, template, layout, opts) do
+    case render_to_string(mod, template || filename_for_module_template(mod), format, assigns) do
+      nil ->
+        nil
+
+      binary ->
+        maybe_with_layout(format, binary, assigns, layout)
+        |> to_binary()
+        |> mjml_to_html()
+    end
   end
 
-  def text_body(email, format, template, mod, assigns, opts) do
-    render_to_string(mod, template, format, assigns)
-    |> maybe_with_layout(format, email, ..., assigns, opts[:layout])
-    |> to_binary()
-    |> Bonfire.Mailer.text_body(email, ...)
+  def render_templated(format, mod, assigns, template, layout, opts) do
+    case render_to_string(mod, template || filename_for_module_template(mod), format, assigns) do
+      nil ->
+        nil
+
+      binary ->
+        maybe_with_layout(format, binary, assigns, layout)
+        |> to_binary()
+    end
   end
 
-  def maybe_with_layout(_format, _email, inner_content, assigns, nil), do: inner_content
+  def maybe_with_layout(_format, inner_content, assigns, nil), do: inner_content
 
-  def maybe_with_layout(format, email, inner_content, assigns, layout) do
+  def maybe_with_layout(format, inner_content, assigns, layout) do
     assigns =
       Map.merge(assigns, %{
         inner_content: inner_content
-        # email: email
       })
       |> debug()
       |> render_to_string(layout, format, ...)
@@ -69,6 +84,7 @@ defmodule Bonfire.Mailer.Render do
 
   # |> Phoenix.HTML.Safe.to_iodata() |> IO.iodata_to_binary()
   defp to_binary(rendered) when is_binary(rendered), do: rendered
+  defp to_binary(_), do: ""
 
   defp mjml_to_html(mjml_binary), do: with({:ok, html} <- Mjml.to_html(mjml_binary), do: html)
 
