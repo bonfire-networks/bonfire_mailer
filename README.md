@@ -226,26 +226,6 @@ MAIL_FROM=your@email.address
 
 Note: 
 - If not specified, `MAIL_REGION` defaults to "eu-west-1".
-<!-- 
-- You can optionally set `MAIL_SESSION_TOKEN` if you're using temporary security credentials. -->
-
-<!-- 
-#### Dyn
-- Website: [https://dyn.com/](https://dyn.com/)
-- No free tier
-```
-MAIL_BACKEND=dyn
-MAIL_KEY=your_dyn_api_key
-``` -->
-
-<!-- 
-#### Microsoft Graph (Office 365)
-- Website: [https://developer.microsoft.com/en-us/graph](https://developer.microsoft.com/en-us/graph)
-- Costs depend on your Office 365 subscription
-```
-MAIL_BACKEND=msgraph
-MAIL_PRIVATE_KEY=your_msgraph_auth_token
-``` -->
 
 
 ### 2. Direct Email Sending Methods
@@ -282,8 +262,8 @@ MAIL_FROM=your@email.address
 ```
 
 Notes: 
-- `MAIL_SERVER` defaults to "/usr/bin/sendmail" if not specified.
-- `MAIL_SERVER` defaults to "-N delay,failure,success" if not specified.
+- `MAIL_SERVER` defaults to `/usr/bin/sendmail` if not specified.
+- `MAIL_ARGS` defaults to `-N delay,failure,success` if not specified.
 - While sendmail can send mail directly (similar to the default behaviour), it can be set up to hand off emails to a local or remote SMTP server for delivery.
 - Using sendmail usually provides more control and logging capabilities compared to the default direct SMTP delivery.
 
