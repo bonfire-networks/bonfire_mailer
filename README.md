@@ -33,7 +33,7 @@ For all email delivery methods, you'll need to set the following environment var
 
 ## Choosing an Email Delivery Method
 
-## Default Behaviour: Direct SMTP Delivery
+## 1. Default Behaviour: Direct SMTP Delivery
 
 If no specific email configuration is set, Bonfire will attempt to deliver emails directly to the recipients' SMTP servers. Here's what you need to know about this default behaviour:
 
@@ -50,7 +50,7 @@ If no specific email configuration is set, Bonfire will attempt to deliver email
 - **Important**: While this default method can work for testing or in very small-scale scenarios, it is strongly recommended to configure a proper email delivery service for any production use of Bonfire. If you want to try this method anyway, make sure to configure [SPF, DKIM, DMARK, etc.](https://www.cloudflare.com/en-gb/learning/email-security/dmarc-dkim-spf/) for your instance domain name and IP address.
 
 
-### 1. Managed Email Service Providers
+### 2. Managed Email Service Providers
 
 These providers offer comprehensive email delivery services, usually featuring analytics, bounce handling, high deliverability rates, etc.
 
@@ -131,6 +131,17 @@ MAIL_BACKEND=zepto
 MAIL_KEY=your_zeptomail_api_key
 MAIL_FROM=your@email.address
 ```
+
+#### Gmail
+- Website: [gmail.com](https://developers.google.com/gmail/api)
+- Free Tier: 500 emails per day
+```
+MAIL_BACKEND=gmail
+MAIL_KEY=your_gmail_api_key 
+MAIL_FROM=your@email.address
+# ^ OAuth2 access token with `gmail.compose` scope
+```
+Note: Using Gmail for sending application email is generally not recommended for production use.
 
 #### Scaleway
 - Website: [scaleway.com](https://www.scaleway.com/en/transactional-email-tem/)
@@ -228,7 +239,7 @@ Note:
 - If not specified, `MAIL_REGION` defaults to "eu-west-1".
 
 
-### 2. Direct Email Sending Methods
+### 3. Direct Email Sending Methods
 
 These methods involve sending emails directly or through your own mail server. They require more setup and maintenance but offer more control.
 
@@ -276,17 +287,6 @@ MAIL_KEY=your_postal_api_key
 MAIL_BASE_URI=https://your_postal_server_api.uri/
 MAIL_FROM=your@email.address
 ```
-
-#### Gmail
-- Website: [gmail.com](https://developers.google.com/gmail/api)
-- Free Tier: 500 emails per day
-```
-MAIL_BACKEND=gmail
-MAIL_KEY=your_gmail_api_key 
-MAIL_FROM=your@email.address
-# ^ OAuth2 access token with `gmail.compose` scope
-```
-Note: Using Gmail for sending application email is generally not recommended for production use.
 
 
 ## Copyright and License
