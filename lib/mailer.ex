@@ -1,11 +1,13 @@
 defmodule Bonfire.Mailer do
   @moduledoc "./README.md" |> File.stream!() |> Enum.drop(1) |> Enum.join()
+
   @behaviour Bonfire.Mailer.Behaviour
 
   use Application
   use Untangle
   use Bonfire.Common.E
   import Bonfire.Mailer.RuntimeConfig, only: [mailer: 0]
+
   alias Bonfire.Common.Config
   alias Bonfire.Common.Utils
 
