@@ -28,7 +28,7 @@ For all email delivery methods, you'll need to set the following environment var
 
 - `MAIL_BACKEND` environment variable to choose your email delivery method or provider. 
 - `MAIL_DOMAIN` or `HOSTNAME`: Your domain name
-- `MAIL_FROM`: The email address from which emails will be sent
+- `MAIL_FROM`: The email address from which emails will be sent (this should match the domain name you set up with SPF/DKIM/DMARC, which will usually be your instance's domain)
 
 
 ## Choosing an Email Delivery Method
@@ -59,21 +59,21 @@ These providers offer comprehensive email delivery services, usually featuring a
 
 #### Brevo (formerly Sendinblue)
 - Website: [brevo.com](https://www.brevo.com/)
-- Free Tier: 300 emails per day, then pay-as-you-go or $15+/month
+- Free Tier: 300 emails per day, then $15+/month or pay-as-you-go ($59 per 10,000 emails)  
 ```
 MAIL_BACKEND=brevo
 MAIL_KEY=your_brevo_api_key
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 #### Mailjet
 - Website: [mailjet.com](https://www.mailjet.com/)
-- Free Tier: 200 emails per day (up to 6,000 emails per month), then $17+/month
+- Free Tier: 200 emails per day, then $17+/month
 ```
 MAIL_BACKEND=mailjet
 MAIL_KEY=your_mailjet_api_key
 MAIL_PRIVATE_KEY=your_mailjet_secret_key
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 #### SMTP2GO
@@ -82,7 +82,7 @@ MAIL_FROM=your@email.address
 ```
 MAIL_BACKEND=SMTP2GO
 MAIL_KEY=your_smtp2go_api_key
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 #### Mailtrap 
@@ -91,7 +91,7 @@ MAIL_FROM=your@email.address
 ```
 MAIL_BACKEND=mailtrap
 MAIL_KEY=your_mailtrap_api_key
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 #### Mailgun
@@ -101,18 +101,9 @@ MAIL_FROM=your@email.address
 MAIL_BACKEND=mailgun
 MAIL_KEY=your_mailgun_api_key
 MAIL_BASE_URI=https://api.eu.mailgun.net/v3
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 Note: The `MAIL_BASE_URI` depends on your Mailgun registration region. The default is set to EU, adjust if necessary.
-
-#### Postmark
-- Website: [postmarkapp.com](https://postmarkapp.com/)
-- Free Tier: 100 emails per month, then $15+/month
-```
-MAIL_BACKEND=postmark
-MAIL_KEY=your_postmark_api_key
-MAIL_FROM=your@email.address
-```
 
 #### Twilio SendGrid 
 - Website: [sendgrid.com](https://sendgrid.com/)
@@ -120,7 +111,16 @@ MAIL_FROM=your@email.address
 ```
 MAIL_BACKEND=sendgrid
 MAIL_KEY=your_sendgrid_api_key
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
+```
+
+#### Postmark
+- Website: [postmarkapp.com](https://postmarkapp.com/)
+- Free Tier: 100 emails per month, then $15+/month
+```
+MAIL_BACKEND=postmark
+MAIL_KEY=your_postmark_api_key
+MAIL_FROM=email@instance.domain
 ```
 
 #### Zoho ZeptoMail
@@ -129,7 +129,18 @@ MAIL_FROM=your@email.address
 ```
 MAIL_BACKEND=zepto
 MAIL_KEY=your_zeptomail_api_key
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
+```
+
+#### Scaleway
+- Website: [scaleway.com](https://www.scaleway.com/en/transactional-email-tem/)
+- No free tier, pay-as-you-go pricing (€2.50 per 10,000 emails)
+```
+MAIL_BACKEND=scaleway
+MAIL_KEY=your_scaleway_api_key
+MAIL_PROJECT_ID=your_scaleway_project_id
+MAIL_PRIVATE_KEY=your_scaleway_secret_key
+MAIL_FROM=email@instance.domain
 ```
 
 #### Gmail
@@ -138,21 +149,10 @@ MAIL_FROM=your@email.address
 ```
 MAIL_BACKEND=gmail
 MAIL_KEY=your_gmail_api_key 
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 # ^ OAuth2 access token with `gmail.compose` scope
 ```
 Note: Using Gmail for sending application email is generally not recommended for production use.
-
-#### Scaleway
-- Website: [scaleway.com](https://www.scaleway.com/en/transactional-email-tem/)
-- No free tier, pay-as-you-go pricing (€0.25/1,000 emails sent)
-```
-MAIL_BACKEND=scaleway
-MAIL_KEY=your_scaleway_api_key
-MAIL_PROJECT_ID=your_scaleway_project_id
-MAIL_PRIVATE_KEY=your_scaleway_secret_key
-MAIL_FROM=your@email.address
-```
 
 #### MailPace
 - Website: [mailpace.com](https://mailpace.com/)
@@ -160,7 +160,7 @@ MAIL_FROM=your@email.address
 ```
 MAIL_BACKEND=mailpace
 MAIL_KEY=your_mailpace_api_key
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 #### Mandrill (Mailchimp Transactional)
@@ -169,7 +169,7 @@ MAIL_FROM=your@email.address
 ```
 MAIL_BACKEND=mandrill
 MAIL_KEY=your_mandrill_api_key
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 #### Bird / SparkPost
@@ -179,7 +179,7 @@ MAIL_FROM=your@email.address
 MAIL_BACKEND=sparkpost
 MAIL_KEY=your_sparkpost_api_key
 MAIL_BASE_URI=https://api.eu.sparkpost.com
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 Note: The `MAIL_BASE_URI` depends on your SparkPost registration region. The default is set to EU, adjust if necessary.
 
@@ -190,7 +190,7 @@ Note: The `MAIL_BASE_URI` depends on your SparkPost registration region. The def
 MAIL_BACKEND=sendcloud
 MAIL_KEY=your_sendcloud_api_key
 MAIL_USER=your_sendcloud_api_user
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 #### SocketLabs
@@ -201,7 +201,7 @@ MAIL_BACKEND=socketlabs
 MAIL_KEY=your_socketlabs_api_key
 MAIL_SERVER=your_socketlabs_server_id
 MAIL_PRIVATE_KEY=your_socketlabs_api_key
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 #### Campaign Monitor
@@ -210,7 +210,7 @@ MAIL_FROM=your@email.address
 ```
 MAIL_BACKEND=campaign_monitor
 MAIL_KEY=your_campaign_monitor_api_key
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 #### Amazon AWS SES
@@ -222,7 +222,7 @@ Amazon SES can be configured in two ways:
 1. Using existing AWS credentials (if already configured for S3 file storage, you can simplify configuration and use the same AWS credentials for both file storage and email delivery):
 ```
 MAIL_BACKEND=aws
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 Note: This method will automatically use the credentials set by `UPLOADS_S3_ACCESS_KEY_ID` and `UPLOADS_S3_SECRET_ACCESS_KEY`. No additional configuration is needed if these are already set up for a Bonfire extension (such as `Bonfire.Files`) which uses S3 file storage.
 
@@ -232,7 +232,7 @@ MAIL_BACKEND=aws
 MAIL_KEY=your_aws_access_key_id
 MAIL_PRIVATE_KEY=your_aws_secret_access_key
 MAIL_REGION=your_aws_region
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 Note: 
@@ -256,7 +256,7 @@ MAIL_SERVER=your_smtp_server
 MAIL_PORT=587
 MAIL_USER=your_smtp_username
 MAIL_PASSWORD=your_smtp_password
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 Notes: 
@@ -269,7 +269,7 @@ MAIL_BACKEND=sendmail
 MAIL_SERVER=/path/to/sendmail
 # MAIL_ARGS=
 MAIL_QMAIL=true_or_false
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 Notes: 
@@ -285,7 +285,7 @@ Notes:
 MAIL_BACKEND=postal
 MAIL_KEY=your_postal_api_key
 MAIL_BASE_URI=https://your_postal_server_api.uri/
-MAIL_FROM=your@email.address
+MAIL_FROM=email@instance.domain
 ```
 
 

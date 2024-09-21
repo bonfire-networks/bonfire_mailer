@@ -11,6 +11,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
     )
 
     config :bonfire_mailer, Bonfire.Mailer, mailer_behaviour: Bonfire.Mailer.Swoosh
+
     # see https://hexdocs.pm/swoosh/Swoosh.Adapters.Mua.html
     config :bonfire_mailer, Bonfire.Mailer.Swoosh, adapter: Swoosh.Adapters.Mua
     # just in case
@@ -235,8 +236,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                                     (case System.get_env("MAIL_SMTP_AUTH") do
                                        "1" -> :always
                                        _ -> :if_available
-                                     end),
-                                  reply_to: from
+                                     end)
                               end
                           end
                       end
@@ -249,7 +249,9 @@ defmodule Bonfire.Mailer.RuntimeConfig do
       end
     end
 
-    config :bonfire_mailer, Bonfire.Mailer, feedback_to: System.get_env("BONFIRE_APP_FEEDBACK_TO")
+    config :bonfire_mailer, Bonfire.Mailer,
+      feedback_to: System.get_env("BONFIRE_APP_FEEDBACK_TO"),
+      reply_to: System.get_env("MAIL_FROM")
 
     config :swoosh, :api_client, Swoosh.ApiClient.Req
   end
@@ -277,7 +279,6 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                 config :bonfire_mailer, Bonfire.Mailer.Bamboo,
                   adapter: adapter,
                   domain: domain,
-                  reply_to: from,
                   api_key: key,
                   api_user: extra[:api_user],
                   api_private_key: extra[:api_private_key],
@@ -313,7 +314,6 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                 config :bonfire_mailer, Bonfire.Mailer.Swoosh,
                   adapter: adapter,
                   domain: domain,
-                  reply_to: from,
                   api_key: key,
                   access_token: key,
                   api_user: extra[:api_user],

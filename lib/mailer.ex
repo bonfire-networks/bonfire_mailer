@@ -42,12 +42,10 @@ defmodule Bonfire.Mailer do
     do: send_impl(email, to, mode, opts)
 
   def send_app_feedback(subject, body, opts \\ []) do
-    from = Config.get([Bonfire.Mailer, :reply_to]) || @default_email
     to = Config.get([Bonfire.Mailer, :feedback_to]) || @team_email
 
     send_impl(body, to, opts[:mode] || :async,
-      subject: "#{subject} - #{app_name()} #{opts[:type] || "feedback"}",
-      from: from
+      subject: "#{subject} - #{app_name()} #{opts[:type] || "feedback"}"
     )
   end
 
@@ -61,13 +59,13 @@ defmodule Bonfire.Mailer do
 
   defp send_impl(%{} = email, to, mode, opts) when is_struct(email) do
     from = opts[:from] || Config.get([Bonfire.Mailer, :reply_to]) || @default_email
-    subject = opts[:subject] || ""
 
     email =
       email
       |> to(to)
       |> from(from)
-      |> subject(subject)
+      |> maybe_subject(opts[:subject])
+      |> debug()
 
     case do_deliver(mode, email) do
       {:ok, _result} -> {:ok, email}
@@ -78,6 +76,9 @@ defmodule Bonfire.Mailer do
     error ->
       handle_error(error, __STACKTRACE__)
   end
+
+  defp maybe_subject(email, nil), do: email
+  defp maybe_subject(email, subject), do: email |> subject(subject)
 
   defp do_deliver(:async, email), do: deliver_async(email)
   defp do_deliver(_, email), do: deliver_inline(email)
