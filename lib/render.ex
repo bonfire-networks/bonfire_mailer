@@ -18,7 +18,7 @@ defmodule Bonfire.Mailer.Render do
 
     email
     |> Bonfire.Mailer.html_body(render_templated("mjml", mod, assigns, template, layout, opts))
-    |> Bonfire.Mailer.text_body(render_templated("text", template, mod, assigns, opts))
+    |> Bonfire.Mailer.text_body(render_templated("text", mod, assigns, template, layout, opts))
   end
 
   # TODO: put the following functions somewhere else?
@@ -35,6 +35,7 @@ defmodule Bonfire.Mailer.Render do
         |> to_binary()
         |> mjml_to_html()
     end
+    |> debug()
   end
 
   def render_templated(format, mod, assigns, template, layout, opts) do
@@ -46,6 +47,7 @@ defmodule Bonfire.Mailer.Render do
         maybe_with_layout(format, binary, assigns, layout)
         |> to_binary()
     end
+    |> debug()
   end
 
   def maybe_with_layout(_format, inner_content, assigns, nil), do: inner_content
@@ -67,12 +69,19 @@ defmodule Bonfire.Mailer.Render do
   #     Phoenix.Template.render_to_string(mod, "#{template}_#{format}", format, assigns)
   #   end
   def render_to_string(mod, template, format, assigns) do
-    case Types.maybe_to_atom!("#{template}_#{format}") do
+    template_fn = "#{template}_#{format}"
+
+    case Types.maybe_to_atom!(template_fn) do
       nil ->
+        warn(
+          template_fn,
+          "No such template known (there should be a function defined with that name in module `#{mod}`)"
+        )
+
         nil
 
-      template ->
-        Utils.maybe_apply(mod, template, [assigns], fallback_return: "")
+      template_fn ->
+        Utils.maybe_apply(mod, template_fn, [assigns], fallback_return: "")
     end
   end
 
