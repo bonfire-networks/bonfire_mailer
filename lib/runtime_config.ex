@@ -19,7 +19,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
   end
 
   def mailer do
-    Bonfire.Common.Config.get([Bonfire.Mailer, :mailer_behaviour]) || Bonfire.Mailer.Bamboo
+    Bonfire.Common.Config.get([Bonfire.Mailer, :mailer_behaviour]) || Bonfire.Mailer.Swoosh
   end
 
   def config do
