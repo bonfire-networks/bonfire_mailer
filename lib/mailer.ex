@@ -92,6 +92,7 @@ defmodule Bonfire.Mailer do
       {:retries_exceeded, _} -> {:error, :mailer_retries_exceeded}
       %Swoosh.DeliveryError{reason: _reason} -> {:error, :mailer_api_error}
       %Bamboo.ApiError{message: _msg} -> {:error, :mailer_api_error}
+      %{reason: :timeout} -> {:error, :mailer_timeout} # we 
       # give up
       _ -> {:error, :mailer}
     end
