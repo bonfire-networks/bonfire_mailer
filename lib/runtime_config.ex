@@ -16,6 +16,9 @@ defmodule Bonfire.Mailer.RuntimeConfig do
     config :bonfire_mailer, Bonfire.Mailer.Swoosh, adapter: Swoosh.Adapters.Mua
     # just in case
     config :bonfire_mailer, Bonfire.Mailer.Bamboo, adapter: Bamboo.LocalAdapter
+
+    config :bonfire_mailer, Bonfire.Mailer,
+      timeout: 1000
   end
 
   def mailer do
@@ -207,7 +210,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                               port = String.to_integer(System.get_env("MAIL_PORT", "587"))
 
                               if System.get_env("MAIL_LIB") != "bamboo" do
-                                config :sample, Sample.Mailer,
+                                config :bonfire_mailer, Bonfire.Mailer,
                                   adapter: Swoosh.Adapters.Mua,
                                   relay: server,
                                   port: port,
