@@ -17,8 +17,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
     # just in case
     config :bonfire_mailer, Bonfire.Mailer.Bamboo, adapter: Bamboo.LocalAdapter
 
-    config :bonfire_mailer, Bonfire.Mailer,
-      timeout: 1000
+    config :bonfire_mailer, Bonfire.Mailer, timeout: 1000
   end
 
   def mailer do
