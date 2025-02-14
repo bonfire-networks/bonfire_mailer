@@ -50,7 +50,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
           any_service(Swoosh.Adapters.Mandrill, Bamboo.MandrillAdapter)
 
         "mailjet" ->
-          secret_key = System.get_env!("MAIL_PRIVATE_KEY")
+          secret_key = System.fetch_env!("MAIL_PRIVATE_KEY")
 
           any_service(Swoosh.Adapters.Mailjet, Bamboo.MailjetAdapter,
             api_private_key: secret_key,
@@ -64,11 +64,11 @@ defmodule Bonfire.Mailer.RuntimeConfig do
           swoosh_service(Swoosh.Adapters.MailPace)
 
         "msgraph" ->
-          swoosh_service(Swoosh.Adapters.MsGraph, auth: System.get_env!("MAIL_PRIVATE_KEY"))
+          swoosh_service(Swoosh.Adapters.MsGraph, auth: System.fetch_env!("MAIL_PRIVATE_KEY"))
 
         "postal" ->
           swoosh_service(Swoosh.Adapters.Postal,
-            base_uri: System.get_env!("MAIL_BASE_URI")
+            base_uri: System.fetch_env!("MAIL_BASE_URI")
           )
 
         "postmark" ->
@@ -79,17 +79,17 @@ defmodule Bonfire.Mailer.RuntimeConfig do
 
         "scaleway" ->
           swoosh_service(Swoosh.Adapters.Scaleway,
-            project_id: System.get_env!("MAIL_PROJECT_ID"),
-            secret_key: System.get_env!("MAIL_PRIVATE_KEY")
+            project_id: System.fetch_env!("MAIL_PROJECT_ID"),
+            secret_key: System.fetch_env!("MAIL_PRIVATE_KEY")
           )
 
         "sendcloud" ->
-          bamboo_service(Bamboo.SendcloudAdapter, api_user: System.get_env!("MAIL_USER"))
+          bamboo_service(Bamboo.SendcloudAdapter, api_user: System.fetch_env!("MAIL_USER"))
 
         "socketlabs" ->
           swoosh_service(Swoosh.Adapters.SocketLabs,
-            server_id: System.get_env!("MAIL_SERVER"),
-            api_key: System.get_env!("MAIL_PRIVATE_KEY")
+            server_id: System.fetch_env!("MAIL_SERVER"),
+            api_key: System.fetch_env!("MAIL_PRIVATE_KEY")
           )
 
         "SMTP2GO" ->
