@@ -18,6 +18,6 @@ defmodule Bonfire.Mailer.Swoosh do
     end)
   end
 
-  defp config, do: []
-  #   defp config, do: Application.get_env(:bonfire_mailer, __MODULE__)
+  # defp config, do: []
+  def config, do: Application.get_env(:bonfire_mailer, __MODULE__, [])
 end

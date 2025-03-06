@@ -128,7 +128,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                     config :bonfire_mailer, Bonfire.Mailer,
                       mailer_behaviour: Bonfire.Mailer.Swoosh
 
-                    config :bonfire_mailer, Bonfire.Swoosh,
+                    config :bonfire_mailer, Bonfire.Mailer.Swoosh,
                       # send using same credentials as ex_aws (eg. configure for file uploads)
                       adapter: Swoosh.Adapters.AmazonSES
                   else
@@ -140,7 +140,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                       config :bonfire_mailer, Bonfire.Mailer,
                         mailer_behaviour: Bonfire.Mailer.Swoosh
 
-                      config :bonfire_mailer, Bonfire.Swoosh,
+                      config :bonfire_mailer, Bonfire.Mailer.Swoosh,
                         adapter: Swoosh.Adapters.AmazonSES,
                         region: region,
                         access_key: key_id,
@@ -209,7 +209,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                               port = String.to_integer(System.get_env("MAIL_PORT", "587"))
 
                               if System.get_env("MAIL_LIB") != "bamboo" do
-                                config :bonfire_mailer, Bonfire.Mailer,
+                                config :bonfire_mailer, Bonfire.Mailer.Swoosh,
                                   adapter: Swoosh.Adapters.Mua,
                                   relay: server,
                                   port: port,
