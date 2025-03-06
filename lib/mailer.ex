@@ -44,7 +44,10 @@ defmodule Bonfire.Mailer do
   def send_app_feedback(subject, body, opts \\ []) do
     to = Config.get([Bonfire.Mailer, :feedback_to]) || @team_email
 
-    send_impl(body, to, opts[:mode] || :async,
+    send_impl(
+      body,
+      to,
+      opts[:mode] || :async,
       opts ++ [subject: "#{subject} - #{app_name()} #{opts[:type] || "feedback"}"]
     )
   end
