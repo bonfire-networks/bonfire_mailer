@@ -2,6 +2,7 @@ defmodule Bonfire.Mailer.Swoosh do
   @behaviour Bonfire.Mailer.Behaviour
 
   use Swoosh.Mailer, otp_app: :bonfire_mailer
+  import Untangle
 
   defdelegate new(data \\ []), to: Swoosh.Email
   defdelegate to(email, address), to: Swoosh.Email
@@ -19,5 +20,5 @@ defmodule Bonfire.Mailer.Swoosh do
   end
 
   # defp config, do: []
-  def config, do: Application.get_env(:bonfire_mailer, __MODULE__, [])
+  def config, do: Application.get_env(:bonfire_mailer, __MODULE__, []) |> debug()
 end
