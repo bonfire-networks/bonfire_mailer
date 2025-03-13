@@ -68,7 +68,7 @@ defmodule Bonfire.Mailer do
       |> to(to)
       |> from(from)
       |> maybe_subject(opts[:subject])
-      |> debug()
+      |> info()
 
     case do_deliver(mode, email) do
       {:ok, _result} -> {:ok, email}
