@@ -23,7 +23,7 @@ defmodule Bonfire.Mailer.SwooshTest do
     # assert_email_sent(email)
 
     # assert an email with specific field(s) was sent
-    assert_email_sent(subject: "test - bonfire Hello, Avengers!")
+    assert_email_sent(subject: "Hello, Avengers! - bonfire feedback")
 
     # assert an email that satisfies a condition
     # assert_email_sent(fn email ->
