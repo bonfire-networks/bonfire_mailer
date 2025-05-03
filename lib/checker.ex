@@ -3,6 +3,7 @@ defmodule Bonfire.Mailer.Checker do
   @moduledoc """
   Functions for checking the validity of email addresses and domains
   """
+  use Bonfire.Common.Config
   alias EmailChecker.Check.Format
   alias EmailChecker.Check.MX
 
@@ -40,7 +41,7 @@ defmodule Bonfire.Mailer.Checker do
       {:error, :mx}
   """
   def validate_email(email) do
-    config = Bonfire.Common.Config.get_ext(:bonfire_mailer)
+    config = Bonfire.Common.Config.get_all(:bonfire_mailer)
     check_format = Keyword.get(config, :check_format, true)
     check_mx = Keyword.get(config, :check_mx, true)
 

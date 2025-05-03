@@ -1,6 +1,7 @@
 defmodule Bonfire.Mailer.RuntimeConfig do
   @behaviour Bonfire.Common.ConfigModule
   import Config
+  use Bonfire.Common.Config
   import Untangle
   def config_module, do: true
 

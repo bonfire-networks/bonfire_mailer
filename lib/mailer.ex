@@ -8,7 +8,7 @@ defmodule Bonfire.Mailer do
   use Bonfire.Common.E
   import Bonfire.Mailer.RuntimeConfig, only: [mailer: 0]
 
-  alias Bonfire.Common.Config
+  use Bonfire.Common.Config
   alias Bonfire.Common.Utils
 
   @default_email "noreply@bonfire.local"

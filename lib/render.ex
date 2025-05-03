@@ -1,7 +1,7 @@
 defmodule Bonfire.Mailer.Render do
   alias Bonfire.Common.Utils
   alias Bonfire.Common.Types
-  alias Bonfire.Common.Config
+  use Bonfire.Common.Config
   use Arrows
   import Untangle
 
