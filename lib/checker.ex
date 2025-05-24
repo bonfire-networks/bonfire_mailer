@@ -52,7 +52,7 @@ defmodule Bonfire.Mailer.Checker do
     end
   end
 
-  @domain_regex ~r/(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)/
+  defp domain_regex, do: ~r/(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)/
 
   @spec validate_domain(domain :: binary) :: :ok | {:error, error_reason}
   @doc """
@@ -83,7 +83,7 @@ defmodule Bonfire.Mailer.Checker do
       {:error, :mx}
   """
   def validate_domain(domain) do
-    if Regex.match?(@domain_regex, domain) do
+    if Regex.match?(domain_regex(), domain) do
       validate_email("test@" <> domain)
     else
       {:error, :format}
