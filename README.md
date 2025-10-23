@@ -257,10 +257,12 @@ MAIL_PORT=587
 MAIL_USER=your_smtp_username
 MAIL_PASSWORD=your_smtp_password
 MAIL_FROM=email@instance.domain
+MAIL_SSL=true
 ```
 
 Notes: 
-- `MAIL_PORT` defaults to 587 if not specified.
+- `MAIL_PORT` defaults to `587` if not specified.
+- `MAIL_SSL` defaults to `true`, set to `false` if server does not support SSL.
 
 #### Sendmail
 - Built into many Unix-like operating systems

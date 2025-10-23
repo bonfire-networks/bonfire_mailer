@@ -14,8 +14,11 @@ defmodule Bonfire.Mailer.RuntimeConfig do
     config :bonfire_mailer, Bonfire.Mailer, mailer_behaviour: Bonfire.Mailer.Swoosh
 
     # see https://hexdocs.pm/swoosh/Swoosh.Adapters.Mua.html
-    config :bonfire_mailer, Bonfire.Mailer.Swoosh, adapter: Swoosh.Adapters.Mua
-    # just in case
+    config :bonfire_mailer, Bonfire.Mailer.Swoosh,
+      adapter: Swoosh.Adapters.Mua,
+      ssl: Bonfire.Common.HTTP.Connection.default_ssl_options()
+
+    # just in case for backwards compatibility:
     config :bonfire_mailer, Bonfire.Mailer.Bamboo, adapter: Bamboo.LocalAdapter
 
     config :bonfire_mailer, Bonfire.Mailer, timeout: 1000
@@ -27,6 +30,9 @@ defmodule Bonfire.Mailer.RuntimeConfig do
 
   def config do
     import Config
+
+    # to cache the decoded SSL certificates
+    config :mua, persistent_term: true
 
     # send emails in prod and dev only config
     if config_env() != :test do
@@ -214,7 +220,13 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                                   adapter: Swoosh.Adapters.Mua,
                                   relay: server,
                                   port: port,
-                                  auth: [username: user, password: password]
+                                  auth: [username: user, password: password],
+                                  protocol:
+                                    if(System.get_env("MAIL_SSL", "false") not in ["false", "0"],
+                                      do: :ssl,
+                                      else: :tcp
+                                    ),
+                                  ssl: Bonfire.Common.HTTP.Connection.default_ssl_options()
                               else
                                 config :bonfire_mailer, Bonfire.Mailer,
                                   mailer_behaviour: Bonfire.Mailer.Bamboo

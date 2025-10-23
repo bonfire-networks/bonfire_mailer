@@ -15,5 +15,5 @@ defmodule Bonfire.Mailer.Bamboo do
 
   def deliver_async(email), do: deliver_later(email, config())
 
-  def config, do: Application.get_env(:bonfire_mailer, __MODULE__) |> debug()
+  def config, do: Application.get_env(:bonfire_mailer, __MODULE__) |> info("mailer config")
 end

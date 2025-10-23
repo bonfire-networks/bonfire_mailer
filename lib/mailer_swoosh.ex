@@ -20,5 +20,5 @@ defmodule Bonfire.Mailer.Swoosh do
   end
 
   # defp config, do: []
-  def config, do: Application.get_env(:bonfire_mailer, __MODULE__, []) |> debug()
+  def config, do: Application.get_env(:bonfire_mailer, __MODULE__, []) |> info("mailer config")
 end
