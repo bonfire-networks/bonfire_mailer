@@ -222,9 +222,9 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                                   port: port,
                                   auth: [username: user, password: password],
                                   protocol:
-                                    if(System.get_env("MAIL_SSL", "false") not in ["false", "0"],
-                                      do: :ssl,
-                                      else: :tcp
+                                    if(System.get_env("MAIL_SSL", true) in ["false", "0"],
+                                      do: :tcp,
+                                      else: :ssl
                                     ),
                                   ssl: Bonfire.Common.HTTP.Connection.default_ssl_options()
                               else
