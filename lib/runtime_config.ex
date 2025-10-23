@@ -226,7 +226,11 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                                       do: :tcp,
                                       else: :ssl
                                     ),
-                                  ssl: Bonfire.Common.HTTP.Connection.default_ssl_options()
+                                  ssl: [
+                                    verify: :verify_peer,
+                                    # Some servers don't support TLS v1.3 yet so we disable it for compatibility
+                                    versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"]
+                                  ]
                               else
                                 config :bonfire_mailer, Bonfire.Mailer,
                                   mailer_behaviour: Bonfire.Mailer.Bamboo
