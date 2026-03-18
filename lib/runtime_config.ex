@@ -5,6 +5,9 @@ defmodule Bonfire.Mailer.RuntimeConfig do
   import Untangle
   def config_module, do: true
 
+  @yes? ~w(true yes 1)
+  @no? ~w(false no none 0)
+
   def mail_blackhole(var) do
     warn(
       var,
@@ -182,7 +185,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                 adapter: Swoosh.Adapters.Sendmail,
                 cmd_path: path,
                 cmd_args: System.get_env("MAIL_ARGS", "-N delay,failure,success"),
-                qmail: System.get_env("MAIL_QMAIL") == "true"
+                qmail: System.get_env("MAIL_QMAIL") in @yes?
           end
 
         "smtp" ->
@@ -222,7 +225,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                                   port: port,
                                   auth: [username: user, password: password],
                                   protocol:
-                                    if(System.get_env("MAIL_SSL", "true") in ["false", "0"],
+                                    if(System.get_env("MAIL_SSL", "true") in @no?,
                                       do: :tcp,
                                       else: :ssl
                                     ),
@@ -249,7 +252,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                                        _ -> :if_available
                                      end),
                                   allowed_tls_versions: [:"tlsv1.2"],
-                                  ssl: System.get_env("MAIL_SSL", "false") not in ["false", "0"],
+                                  ssl: System.get_env("MAIL_SSL", "false") not in @no?,
                                   retries: String.to_integer(System.get_env("MAIL_RETRIES", "1")),
                                   auth:
                                     (case System.get_env("MAIL_SMTP_AUTH") do
