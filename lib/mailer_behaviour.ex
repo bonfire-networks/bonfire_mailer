@@ -1,5 +1,5 @@
 defmodule Bonfire.Mailer.Behaviour do
-  @type email :: Swoosh.Email.t() | Bamboo.Email.t()
+  @type email :: Swoosh.Email.t()
   @callback new() :: email()
   @callback new(term()) :: email()
   @callback to(email(), String.t() | {String.t(), String.t()}) :: email()

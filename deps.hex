@@ -3,17 +3,9 @@ jason = "~> 1.0"
 
 # email - todo make optional
 swoosh = "~> 1.17"
+phoenix_swoosh = "~> 1.2"
 mua = "~> 0.2.0"
 mail = "~> 0.4.1"
-
-bamboo = "~> 2.2"
-bamboo_smtp = "~> 4.2"
-bamboo_mailjet = "~> 0.1"
-bamboo_postmark = "~> 1.0"
-bamboo_campaign_monitor = "~> 0.1"
-bamboo_sendcloud = "~> 0.2"
-bamboo_sparkpost = "~> 2.0"
-bamboo_ses = "~> 0.5.0"
 
 mjml = "~> 5.0"
 gen_smtp = "~> 1.3"
