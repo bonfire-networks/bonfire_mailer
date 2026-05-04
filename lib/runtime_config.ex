@@ -121,8 +121,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                   mail_blackhole("MAIL_PRIVATE_KEY or UPLOADS_S3_SECRET_ACCESS_KEY")
 
                 private_key ->
-                  config :bonfire_mailer, Bonfire.Mailer,
-                    mailer_behaviour: Bonfire.Mailer.Swoosh
+                  config :bonfire_mailer, Bonfire.Mailer, mailer_behaviour: Bonfire.Mailer.Swoosh
 
                   if System.get_env("UPLOADS_S3_ACCESS_KEY_ID") &&
                        System.get_env("UPLOADS_S3_SECRET_ACCESS_KEY") &&
