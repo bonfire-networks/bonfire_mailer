@@ -5,7 +5,7 @@ jason = "~> 1.0"
 swoosh = "~> 1.17"
 phoenix_swoosh = "~> 1.2"
 mua = "~> 0.2.0"
-mail = "~> 0.4.1"
+mail = "~> 0.5.2"
 
 mjml = "~> 5.0"
 gen_smtp = "~> 1.3"
