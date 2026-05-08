@@ -10,6 +10,6 @@ mail = "~> 0.4.1"
 mjml = "~> 5.0"
 gen_smtp = "~> 1.3"
 # fake data generation, mostly for tests
-faker = "~> 0.18"
+faker_fork = "~> 0.19"
 # checking email validity
 email_checker = "~> 0.2"
