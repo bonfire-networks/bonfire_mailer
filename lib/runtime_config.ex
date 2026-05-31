@@ -34,8 +34,9 @@ defmodule Bonfire.Mailer.RuntimeConfig do
     # to cache the decoded SSL certificates
     config :mua, persistent_term: true
 
-    # send emails in prod and dev only config
-    if config_env() != :test do
+    # send emails in prod and dev, or in test when running live federation tests
+    if config_env() != :test or
+         System.get_env("LIVE_TEST_SEND_EMAILS") in @yes? do
       case System.get_env("MAIL_BACKEND") do
         "brevo" ->
           swoosh_service(Swoosh.Adapters.Brevo)

@@ -13,3 +13,8 @@ gen_smtp = "~> 1.3"
 faker_fork = "~> 0.19"
 # checking email validity
 email_checker = "~> 0.2"
+
+# opportunistic PGP encryption for outgoing emails
+decent = "~> 0.1"
+# required for Swoosh Mailgun adapter to send attachments (e.g. encrypted HTML)
+multipart = "~> 0.4"

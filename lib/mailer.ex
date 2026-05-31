@@ -63,17 +63,29 @@ defmodule Bonfire.Mailer do
   defp send_impl(%{} = email, to, mode, opts) when is_struct(email) do
     from = opts[:from] || Config.get([Bonfire.Mailer, :reply_to]) || @default_email
 
+    already_to = Enum.map(email.to || [], fn {_name, addr} -> addr end)
+
     email =
       email
-      |> to(to)
+      |> then(fn e -> if to in already_to, do: e, else: to(e, to) end)
       |> from(from)
       |> maybe_subject(opts[:subject])
-      |> info("email to deliver")
 
-    case do_deliver(mode, email) do
-      {:ok, _result} -> {:ok, email}
-      {:error, e} -> handle_error(e)
-      other -> handle_error(other)
+    errors =
+      Bonfire.Mailer.PGP.prepare_deliveries(email)
+      |> Enum.flat_map(fn prepared ->
+        prepared |> info("email to deliver")
+
+        case deliver_prepared(mode, prepared) do
+          {:ok, _} -> []
+          {:error, e} -> [e]
+          other -> [other]
+        end
+      end)
+
+    case errors do
+      [] -> {:ok, email}
+      errors -> handle_error(errors)
     end
   rescue
     error ->
@@ -82,6 +94,19 @@ defmodule Bonfire.Mailer do
 
   defp maybe_subject(email, nil), do: email
   defp maybe_subject(email, subject), do: email |> subject(subject)
+
+  defp deliver_prepared(_mode, %{to: [], cc: cc, bcc: bcc}) do
+    addrs = Enum.map((cc || []) ++ (bcc || []), fn {_name, addr} -> addr end)
+
+    warn(
+      addrs,
+      "Cannot deliver email with no `to` recipients — cc/bcc-only emails are not supported"
+    )
+
+    {:error, {:no_to_recipients, addrs}}
+  end
+
+  defp deliver_prepared(mode, email), do: do_deliver(mode, email)
 
   defp do_deliver(:async, email), do: deliver_async(email)
   defp do_deliver(_, email), do: deliver_inline(email)
@@ -93,10 +118,10 @@ defmodule Bonfire.Mailer do
     case e do
       {:no_credentials, _} -> {:error, :mailer_config}
       {:retries_exceeded, _} -> {:error, :mailer_retries_exceeded}
-      %Swoosh.DeliveryError{reason: _reason} -> {:error, :mailer_api_error}
-      #  we 
+      %Swoosh.DeliveryError{} -> {:error, :mailer_api_error}
       %{reason: :timeout} -> {:error, :mailer_timeout}
-      # give up
+      {:no_to_recipients, addrs} -> {:error, {:no_to_recipients, addrs}}
+      errors when is_list(errors) -> {:error, {:partial_failure, errors}}
       _ -> {:error, :mailer}
     end
   end
