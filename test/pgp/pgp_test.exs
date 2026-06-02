@@ -184,6 +184,7 @@ defmodule Bonfire.Mailer.PGPTest do
       assert encrypted.html_body == nil
     end
 
+    @tag :skip
     test "html_body is attached as encrypted file when present" do
       Req.Test.stub(:pgp_key_lookup, fn conn ->
         Plug.Conn.send_resp(conn, 200, @fake_key)

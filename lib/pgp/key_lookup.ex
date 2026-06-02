@@ -21,14 +21,23 @@ defmodule Bonfire.Mailer.PGP.KeyLookup do
     hash = wkd_hash(local)
     encoded = URI.encode_www_form(local)
 
-    Bonfire.Common.Utils.apply_async_first_ok(
-      [
-        fn -> wkd_advanced(domain, hash, encoded) end,
-        fn -> wkd_direct(domain, hash, encoded) end,
-        fn -> keyserver_lookup(email) end
-      ],
-      timeout: @timeout
-    )
+    lookups = [
+      fn -> wkd_advanced(domain, hash, encoded) end,
+      fn -> wkd_direct(domain, hash, encoded) end,
+      fn -> keyserver_lookup(email) end
+    ]
+
+    # Run synchronously when a test plug is configured (Req.Test stubs are process-local)
+    if Keyword.has_key?(Config.get([__MODULE__, :req_options], []), :plug) do
+      Enum.reduce_while(lookups, {:error, :not_found}, fn f, _acc ->
+        case f.() do
+          {:ok, _} = ok -> {:halt, ok}
+          _ -> {:cont, {:error, :not_found}}
+        end
+      end)
+    else
+      Bonfire.Common.Utils.apply_async_first_ok(lookups, timeout: @timeout)
+    end
   end
 
   def wkd_advanced(domain, hash, encoded) do
