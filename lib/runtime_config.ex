@@ -58,7 +58,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
           swoosh_service(Swoosh.Adapters.Mandrill)
 
         "mailjet" ->
-          secret_key = System.fetch_env!("MAIL_PRIVATE_KEY")
+          secret_key = Bonfire.Common.EnvSecrets.env_or_file!("MAIL_PRIVATE_KEY")
 
           swoosh_service(Swoosh.Adapters.Mailjet,
             api_private_key: secret_key,
@@ -72,7 +72,9 @@ defmodule Bonfire.Mailer.RuntimeConfig do
           swoosh_service(Swoosh.Adapters.MailPace)
 
         "msgraph" ->
-          swoosh_service(Swoosh.Adapters.MsGraph, auth: System.fetch_env!("MAIL_PRIVATE_KEY"))
+          swoosh_service(Swoosh.Adapters.MsGraph,
+            auth: Bonfire.Common.EnvSecrets.env_or_file!("MAIL_PRIVATE_KEY")
+          )
 
         "postal" ->
           swoosh_service(Swoosh.Adapters.Postal,
@@ -85,13 +87,13 @@ defmodule Bonfire.Mailer.RuntimeConfig do
         "scaleway" ->
           swoosh_service(Swoosh.Adapters.Scaleway,
             project_id: System.fetch_env!("MAIL_PROJECT_ID"),
-            secret_key: System.fetch_env!("MAIL_PRIVATE_KEY")
+            secret_key: Bonfire.Common.EnvSecrets.env_or_file!("MAIL_PRIVATE_KEY")
           )
 
         "socketlabs" ->
           swoosh_service(Swoosh.Adapters.SocketLabs,
             server_id: System.fetch_env!("MAIL_SERVER"),
-            api_key: System.fetch_env!("MAIL_PRIVATE_KEY")
+            api_key: Bonfire.Common.EnvSecrets.env_or_file!("MAIL_PRIVATE_KEY")
           )
 
         "SMTP2GO" ->
@@ -111,22 +113,24 @@ defmodule Bonfire.Mailer.RuntimeConfig do
         "aws" ->
           IO.puts("Note: Transactional emails will be sent through AWS SES.")
 
-          case System.get_env("MAIL_KEY") || System.get_env("UPLOADS_S3_ACCESS_KEY_ID") do
+          case Bonfire.Common.EnvSecrets.env_or_file("MAIL_KEY") ||
+                 Bonfire.Common.EnvSecrets.env_or_file("UPLOADS_S3_ACCESS_KEY_ID") do
             nil ->
               mail_blackhole("MAIL_KEY or UPLOADS_S3_ACCESS_KEY_ID")
 
             key_id ->
-              case System.get_env("MAIL_PRIVATE_KEY") ||
-                     System.get_env("UPLOADS_S3_SECRET_ACCESS_KEY") do
+              case Bonfire.Common.EnvSecrets.env_or_file("MAIL_PRIVATE_KEY") ||
+                     Bonfire.Common.EnvSecrets.env_or_file("UPLOADS_S3_SECRET_ACCESS_KEY") do
                 nil ->
                   mail_blackhole("MAIL_PRIVATE_KEY or UPLOADS_S3_SECRET_ACCESS_KEY")
 
                 private_key ->
                   config :bonfire_mailer, Bonfire.Mailer, mailer_behaviour: Bonfire.Mailer.Swoosh
 
-                  if System.get_env("UPLOADS_S3_ACCESS_KEY_ID") &&
-                       System.get_env("UPLOADS_S3_SECRET_ACCESS_KEY") &&
-                       (!System.get_env("MAIL_KEY") || !System.get_env("MAIL_PRIVATE_KEY")) do
+                  if Bonfire.Common.EnvSecrets.env_or_file("UPLOADS_S3_ACCESS_KEY_ID") &&
+                       Bonfire.Common.EnvSecrets.env_or_file("UPLOADS_S3_SECRET_ACCESS_KEY") &&
+                       (!Bonfire.Common.EnvSecrets.env_or_file("MAIL_KEY") ||
+                          !Bonfire.Common.EnvSecrets.env_or_file("MAIL_PRIVATE_KEY")) do
                     # send using same credentials as ex_aws (eg. configure for file uploads)
                     config :bonfire_mailer, Bonfire.Mailer.Swoosh,
                       adapter: Swoosh.Adapters.AmazonSES
@@ -173,7 +177,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                       mail_blackhole("MAIL_USER")
 
                     user ->
-                      case System.get_env("MAIL_PASSWORD") do
+                      case Bonfire.Common.EnvSecrets.env_or_file("MAIL_PASSWORD") do
                         nil ->
                           mail_blackhole("MAIL_PASSWORD")
 
@@ -221,7 +225,7 @@ defmodule Bonfire.Mailer.RuntimeConfig do
   end
 
   def swoosh_service(adapter, extra \\ []) do
-    case System.get_env("MAIL_KEY") do
+    case Bonfire.Common.EnvSecrets.env_or_file("MAIL_KEY") do
       nil ->
         mail_blackhole("MAIL_KEY")
 
