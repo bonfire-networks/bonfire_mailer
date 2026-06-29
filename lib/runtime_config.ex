@@ -177,7 +177,8 @@ defmodule Bonfire.Mailer.RuntimeConfig do
                       mail_blackhole("MAIL_USER")
 
                     user ->
-                      case Bonfire.Common.EnvSecrets.env_or_file("MAIL_KEY") || Bonfire.Common.EnvSecrets.env_or_file("MAIL_PASSWORD") do
+                      case Bonfire.Common.EnvSecrets.env_or_file("MAIL_KEY") ||
+                             Bonfire.Common.EnvSecrets.env_or_file("MAIL_PASSWORD") do
                         nil ->
                           mail_blackhole("MAIL_KEY")
 
