@@ -52,7 +52,12 @@ defmodule Bonfire.Mailer do
     )
   end
 
-  def app_name, do: Utils.maybe_apply(Bonfire.Application, :name, [], fallback_return: "Bonfire")
+  def app_name do
+    Config.get(
+      [:ui, :theme, :instance_name],
+      Utils.maybe_apply(Bonfire.Application, :name_and_flavour, [], fallback_return: "Bonfire")
+    )
+  end
 
   defp send_impl(email_content, to, mode, opts) when is_binary(email_content) do
     new()
