@@ -23,7 +23,8 @@ defmodule Bonfire.Mailer.SwooshTest do
     # assert_email_sent(email)
 
     # assert an email with specific field(s) was sent
-    assert_email_sent(subject: "Hello, Avengers! - bonfire feedback")
+    # derive the app name from config (like `send_app_feedback` does) so this passes on any flavour/instance_name
+    assert_email_sent(subject: "Hello, Avengers! - #{Bonfire.Mailer.app_name()} feedback")
 
     # assert an email that satisfies a condition
     # assert_email_sent(fn email ->
@@ -43,6 +44,6 @@ defmodule Bonfire.Mailer.SwooshTest do
     {:ok, email} = Bonfire.Mailer.send_app_feedback("Hello, Avengers!", "test", mode: :async)
 
     # assert an email with specific field(s) was sent
-    assert_email_sent(subject: "test - bonfire Hello, Avengers!")
+    assert_email_sent(subject: "test - #{Bonfire.Mailer.app_name()} Hello, Avengers!")
   end
 end
