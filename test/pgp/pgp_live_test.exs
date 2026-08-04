@@ -1,6 +1,6 @@
 defmodule Bonfire.Mailer.PGP.LiveTest do
   @moduledoc """
-  Live tests that send real emails - both encrypted and plain.
+  Live tests that send real emails, both encrypted and plain.
 
   Run with:
     LIVE_TEST_SEND_EMAILS=true LIVE_TEST_EMAIL_ENCRYPTED=you@pm.me LIVE_TEST_EMAIL_PLAIN=you@gmail.com just test-live-DRAGONS extensions/bonfire_mailer/test/pgp/pgp_live_test.exs

@@ -31,6 +31,9 @@ defmodule Bonfire.Mailer.RuntimeConfig do
   def config do
     import Config
 
+    config :bonfire_mailer, Bonfire.Mailer.PGP,
+      modularity: System.get_env("MAIL_PGP_ENABLE", "false") in @yes?
+
     # to cache the decoded SSL certificates
     config :mua, persistent_term: true
 

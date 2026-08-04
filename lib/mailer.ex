@@ -77,7 +77,7 @@ defmodule Bonfire.Mailer do
       |> maybe_subject(opts[:subject])
 
     errors =
-      Bonfire.Mailer.PGP.prepare_deliveries(email)
+      prepare_deliveries(email)
       |> Enum.flat_map(fn prepared ->
         prepared |> info("email to deliver")
 
@@ -95,6 +95,10 @@ defmodule Bonfire.Mailer do
   rescue
     error ->
       handle_error(error, __STACKTRACE__)
+  end
+
+  def prepare_deliveries(%Swoosh.Email{} = email) do
+    Utils.maybe_apply(Bonfire.Mailer.PGP, :prepare_deliveries, [email], fallback_return: [email])
   end
 
   defp maybe_subject(email, nil), do: email

@@ -25,19 +25,10 @@ defmodule Bonfire.Mailer.PGP do
   - One per recipient who has a PGP key (individually encrypted)
   - One for all recipients without keys (plain, preserving To/CC/BCC roles)
   """
-  def prepare_deliveries(%Swoosh.Email{} = email) do
-    if Config.get([__MODULE__, :modularity]) == :disabled do
-      info("PGP disabled via modularity config — sending plain")
-      [email]
-    else
-      do_prepare_deliveries(email)
-    end
-  end
+  def prepare_deliveries(%{text_body: nil} = email), do: [email]
+  def prepare_deliveries(%{text_body: ""} = email), do: [email]
 
-  defp do_prepare_deliveries(%{text_body: nil} = email), do: [email]
-  defp do_prepare_deliveries(%{text_body: ""} = email), do: [email]
-
-  defp do_prepare_deliveries(email) do
+  def prepare_deliveries(email) do
     # Only encrypt when email has a plain text body — inline PGP is text-only.
     # Recipients with a PGP key get an individually encrypted copy.
     # Recipients without a key (or when encryption fails) fall back to the
