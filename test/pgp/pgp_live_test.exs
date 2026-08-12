@@ -12,6 +12,9 @@ defmodule Bonfire.Mailer.PGP.LiveTest do
 
   use ExUnit.Case, async: false
 
+  # bucket this into the backend CI leg: bare `ExUnit.Case` skips the tag the extension case templates apply, so without it this also runs in the federation job catch-all
+  @moduletag :backend
+
   @moduletag :live_federation
 
   @subject "[Bonfire PGP live test] #{DateTime.utc_now() |> DateTime.to_string()}"
