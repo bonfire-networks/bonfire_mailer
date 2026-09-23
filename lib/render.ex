@@ -95,7 +95,13 @@ defmodule Bonfire.Mailer.Render do
   defp to_binary(rendered) when is_binary(rendered), do: rendered
   defp to_binary(_), do: ""
 
-  defp mjml_to_html(mjml_binary), do: with({:ok, html} <- Mjml.to_html(mjml_binary), do: html)
+  # said out loud when it fails, since a caller falling back to something else would otherwise hide why
+  defp mjml_to_html(mjml_binary) do
+    case Mjml.to_html(mjml_binary) do
+      {:ok, html} -> html
+      other -> error(other, "Could not turn MJML into HTML")
+    end
+  end
 
   defp filename_for_module_template(module) do
     module
