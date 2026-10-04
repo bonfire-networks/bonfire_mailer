@@ -55,7 +55,16 @@ defmodule Bonfire.Mailer.PGP.KeyLookup do
   defp fetch(url) do
     extra_opts = Bonfire.Common.Config.get([__MODULE__, :req_options], [])
 
-    case Req.get(url, [decode_body: false, retry: false, redirect: false] ++ extra_opts) do
+    # the WKD domain comes from an email address, so it mustn't make the server send requests to private addresses
+    case Req.get(
+           url,
+           [
+             decode_body: false,
+             retry: false,
+             redirect: false,
+             plugins: [&Bonfire.Common.HTTP.SSRF.attach/1]
+           ] ++ extra_opts
+         ) do
       {:ok, %{status: 200, body: body}} when body != "" and body != nil ->
         if pgp_key?(body) do
           {:ok, body}

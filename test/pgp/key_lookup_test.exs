@@ -132,6 +132,22 @@ defmodule Bonfire.Mailer.PGP.KeyLookupTest do
     end
   end
 
+  # the domain comes from an email address (e.g. given at signup), so it mustn't be able to make the server send requests to private addresses
+  test "never sends a request to a recipient's domain on a private address" do
+    test_pid = self()
+
+    Req.Test.stub(:pgp_key_lookup, fn conn ->
+      send(test_pid, {:hit, conn.host})
+      Plug.Conn.send_resp(conn, 404, "")
+    end)
+
+    KeyLookup.lookup("someone@10.0.0.1")
+
+    refute_received {:hit, "10.0.0.1"}
+    # the public keyserver is still asked, so a lookup did happen
+    assert_received {:hit, "keys.openpgp.org"}
+  end
+
   defp extract_hash(path) do
     path |> String.split("/hu/") |> List.last() |> String.split("?") |> List.first()
   end
