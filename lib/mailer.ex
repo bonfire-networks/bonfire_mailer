@@ -23,6 +23,10 @@ defmodule Bonfire.Mailer do
     Supervisor.start_link(children, strategy: :one_for_one)
   end
 
+  @doc "Whether mail is sent straight to the recipient's mail server, which is what happens when no mail backend is configured (see `mail_blackhole/1` in the runtime config). Such mail often never arrives."
+  def sending_directly?,
+    do: Config.get([Bonfire.Mailer.Swoosh, :adapter]) == Swoosh.Adapters.Mua
+
   def new(data \\ []), do: mailer().new(data)
   def to(email, address), do: mailer().to(email, address)
   def from(email, address), do: mailer().from(email, address)
